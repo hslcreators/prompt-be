@@ -64,6 +64,7 @@ Create a .env file inside the root of your application and include the following
 API_KEY=your_api_key
 DATABASE_URL=postgres://your_db_user:your_db_password@localhost:5432/your_db_name
 DEBUG_MODE=True
+SECRET_KEY = the_secret_key
 ```
 
 > Note!! you need to create the database `prompt` yourself before doing any other thing within the app if you need it to work properly. You could use tool like `PgAdmin`
