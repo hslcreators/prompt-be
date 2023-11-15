@@ -9,5 +9,6 @@
 3. Pull changes from the main branch using git pull origin main command 
 4. Make your change
 5. Push your change using git push
+6. Make a pull request and wait for Bayode to approve
 
 # Requirements for projects
