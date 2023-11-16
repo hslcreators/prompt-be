@@ -1,5 +1,5 @@
 # prompt-be
-This is a `Python / Django` project.
+This is a Jira test
 
 <img align="left" alt="Python" width="40px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" />
 
