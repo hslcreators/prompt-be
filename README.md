@@ -5,6 +5,7 @@ This is a `Python / Django` project.
 
 <img align="left" alt="Django" width="40px" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/django/django-plain.svg" />
 
+<h1></h1>
 
 ## Getting Started
 
