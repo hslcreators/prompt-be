@@ -29,7 +29,7 @@ def create_user(request: Request):
 
         otp = OneTimePassword.objects.create(email=otp_data["email"], otp=otp_data["otp"], dummy="")
 
-        token = Token.objects.create(user=user)
+        token, created = Token.objects.get_or_create(user=user)
 
         data = {
             "otp": pin,
