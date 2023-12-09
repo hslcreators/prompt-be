@@ -22,11 +22,7 @@ def create_user(request: Request):
         pin = generate_pin()
         email = request.data["email"]
 
-        otp = OneTimePassword.objects.create(email=email, otp=pin)
-
-        otp_serializer = OTPSerializer(data=otp)
-        if otp_serializer.is_valid():
-            otp_serializer.save()
+        services.generate_otp(email=email, pin=pin)
 
         serializer.save()
         user = User.objects.get(username=request.data["username"])
@@ -77,12 +73,14 @@ def login(request: Request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def verify_token(request: Request):
+
     request_otp = request.data["otp"]
     user = request.user
 
     user_serializer = UserSerializer(instance=user)
 
-    otp = OneTimePassword.objects.filter(email=user_serializer.data["email"], otp=request_otp).first()
+    services.remove_old_otps()
+    otp = OneTimePassword.objects.filter(email=user_serializer.data["email"], otp=request_otp, is_expired=False).first()
 
     if user is None:
         raise AuthenticationFailed("Invalid Authentication Token")
@@ -96,3 +94,19 @@ def verify_token(request: Request):
     user.is_verified = True
     user.save()
     return Response(data=user_serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def generate_otp(request: Request):
+    user = request.user
+    pin = generate_pin()
+
+    user_serializer = UserSerializer(instance=user)
+
+    services.generate_otp(email=user_serializer.data["email"], pin=pin)
+
+    return Response(data={
+        "otp": pin
+    }, status=status.HTTP_200_OK)

@@ -13,4 +13,4 @@ class OTPSerializer(serializers.ModelSerializer):
 
     class Meta(object):
         model = OneTimePassword
-        fields = ["otp", "expiry_date", "email", "created", "dummy"]
+        fields = ["otp", "expiry_date", "email", "created", "dummy", "is_expired"]

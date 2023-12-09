@@ -42,6 +42,7 @@ class OneTimePassword(models.Model):
     expiry_date = models.DateTimeField(auto_now=True)
     # I'm using the dummy field to track changes in the otp to know the expiry date
     dummy = models.CharField(max_length=5, blank=False)
+    is_expired = models.BooleanField(default=False)
 
     def __str__(self):
         return self.email
