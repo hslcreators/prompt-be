@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'channels',
     
     'apps.authentication',
@@ -65,6 +66,29 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+]
+
+CORS_ALLOW_HEADERS = [
+    'x-api-key',
+    'content-type',
+    'X-CSRFToken',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    
+    "http://127.0.0.1:5500",
+    "http://127.0.0.1:5500",
+    
+    "http://foroom.vercel.app",
+    "https://foroom.vercel.app",
 ]
 
 ROOT_URLCONF = 'PromptBE.urls'

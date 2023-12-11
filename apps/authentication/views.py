@@ -30,7 +30,7 @@ def create_user(request: Request):
 
         user.save()
 
-        token = Token.objects.create(user=user)
+        token, created = Token.objects.get_or_create(user=user)
 
         data = {
             "otp": pin,
