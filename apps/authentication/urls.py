@@ -2,5 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("signup/", views.create_user, name="Sign Up")
+    path("sign-up/", views.create_user, name="Sign Up"),
+    path("login/", views.login, name="Log in"),
+    path("verify-otp/", views.verify_token, name="Verify OTP"),
+    path("generate-otp/", views.generate_otp, name="Generate OTP")
 ]
