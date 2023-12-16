@@ -5,9 +5,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from . import services
-from .serializers import UserSerializer, OTPSerializer
+from .serializers import UserSerializer, OTPSerializer, PrinterSerializer
 from rest_framework.authtoken.models import Token
-from .models import User, OneTimePassword
+from .models import User, OneTimePassword, Printer
 from rest_framework import status
 from .services import generate_pin
 from rest_framework.exceptions import AuthenticationFailed
@@ -18,7 +18,6 @@ import datetime
 def create_user(request: Request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
-
         pin = generate_pin()
         email = request.data["email"]
 
@@ -33,6 +32,7 @@ def create_user(request: Request):
         token = Token.objects.create(user=user)
 
         data = {
+            "user_id": user.id,
             "otp": pin,
             "token": token.key,
             "data": serializer.data
@@ -62,6 +62,7 @@ def login(request: Request):
     token = Token.objects.get(user=user)
 
     response = {
+        "user_id": user.id,
         "user": serializer.data,
         "token": token.key
     }
@@ -73,7 +74,6 @@ def login(request: Request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def verify_token(request: Request):
-
     request_otp = request.data["otp"]
     user = request.user
 
@@ -110,3 +110,28 @@ def generate_otp(request: Request):
     return Response(data={
         "otp": pin
     }, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def create_printer(request: Request):
+
+    user = request.user
+    if user.is_verified:
+
+        printer = Printer.objects.create(user=user, id_user=request.data["id_user"],
+                                         description=request.data["description"], is_open=request.data["is_open"],
+                                         phone_number=request.data["phone_number"], location=request.data["location"],
+                                         average_rating=request.data["average_rating"],
+                                         offers_coloured=request.data["offers_coloured"]
+                                         )
+
+        user.is_printer = True
+        user.save()
+
+        printer_serializer = PrinterSerializer(instance=printer)
+        return Response(data=printer_serializer.data, status=status.HTTP_201_CREATED)
+
+    else:
+        raise AuthenticationFailed("User is not verified by OTP")
