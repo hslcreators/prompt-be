@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'channels',
     
     'apps.authentication',
@@ -65,7 +66,46 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
+CORS_ALLOW_HEADERS = [
+    'x-api-key',
+    'content-type',
+    'X-CSRFToken',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    
+    "http://prompt.vercel.app",
+    "https://prompt.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    
+    "http://prompt.vercel.app",
+    "https://prompt.vercel.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'PromptBE.urls'
 
@@ -92,9 +132,10 @@ WSGI_APPLICATION = 'PromptBE.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # Custom User Model
@@ -145,3 +186,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# EMAIL settings
+EMAIL_BACKEND = f'{config('EMAIL_BACKEND')}'
+EMAIL_HOST = f'{config('EMAIL_HOST')}'
+EMAIL_PORT = f'{config('EMAIL_PORT')}'  # or the appropriate port
+EMAIL_USE_TLS = f'{config('EMAIL_USE_TLS')}'
+EMAIL_HOST_USER = f'{config('EMAIL_HOST_USER')}'
+EMAIL_HOST_PASSWORD = f'{config('EMAIL_HOST_PASSWORD')}'
