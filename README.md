@@ -29,7 +29,7 @@ Then , activate the virtual environment :
 .\env\Scripts\activate
 ```
 
-> Please not to make use of backslash `\` and not frontslash `/`
+> Please note to make use of backslash `\` and not frontslash `/` as seen above.
 
 Now you should see `(env)` on your terminal. This indicates that your virtual environment has been created and activated.
 
