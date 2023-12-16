@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, OneTimePassword
+from .models import User, OneTimePassword, Printer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,7 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class OTPSerializer(serializers.ModelSerializer):
-
     class Meta(object):
         model = OneTimePassword
         fields = ["otp", "expiry_date", "email", "created", "dummy", "is_expired"]
+
+
+class PrinterSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = Printer
+        fields = ["user", "id_user", "description", "is_open", "phone_number", "location", "average_rating",
+                  "offers_coloured"]
