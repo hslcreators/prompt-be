@@ -31,7 +31,10 @@ urlpatterns = [
     
     path('api/', include('apps.core.urls')),
     path('api/auth/', include('apps.authentication.urls')),
-    path('api/order/', include('apps.orders.urls'))
+    path('api/notif/', include('apps.notifications.urls')),
+    path('api/orders/', include('apps.orders.urls')),
+    path('api/reviews/', include('apps.reviews.urls')),
+    path('api/wallet/', include('apps.wallet.urls')),
 ]
 
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,

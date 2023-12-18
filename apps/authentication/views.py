@@ -1,3 +1,5 @@
+from django.core.mail import send_mail
+
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -13,6 +15,7 @@ from .services import generate_pin
 from rest_framework.exceptions import AuthenticationFailed
 import datetime
 
+from decouple import config
 
 @api_view(["POST"])
 def create_user(request: Request):
@@ -29,7 +32,7 @@ def create_user(request: Request):
 
         user.save()
 
-        token = Token.objects.create(user=user)
+        token, created = Token.objects.get_or_create(user=user)
 
         data = {
             "user_id": user.id,
@@ -37,8 +40,15 @@ def create_user(request: Request):
             "token": token.key,
             "data": serializer.data
         }
-
+        
         # TODO: Send mail to user containing the otp pin
+        # send_mail(
+        #     'Verify your Prompt Account!',
+        #     f'Here is you One Time Password - {pin}',
+        #     'bayodeiretomiwa@gmail.com',
+        #     ['email'],
+        #     fail_silently=False,
+        # )
 
         return Response(data=data, status=status.HTTP_201_CREATED)
 
