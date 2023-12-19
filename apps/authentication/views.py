@@ -60,7 +60,7 @@ def login(request: Request):
     email = request.data["email"]
     password = request.data["password"]
 
-    user = User.objects.filter(email=email).first()
+    user = User.objects.filter(email=email, is_verified=True).first()
     serializer = UserSerializer(instance=user)
 
     if user is None:
@@ -130,7 +130,7 @@ def create_printer(request: Request):
     user = request.user
     if user.is_verified:
 
-        printer = Printer.objects.create(user=user, id_user=request.data["id_user"],
+        printer = Printer.objects.create(user=user, id_user=user.id,
                                          description=request.data["description"], is_open=request.data["is_open"],
                                          phone_number=request.data["phone_number"], location=request.data["location"],
                                          average_rating=request.data["average_rating"],
