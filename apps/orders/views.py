@@ -41,3 +41,28 @@ def get_order_by_id(request: Request, order_id: int):
     order_serializer = OrderSerializer(instance=order)
 
     return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_orders_by_printer(request: Request):
+    user = request.user
+    printer = Printer.objects.get(id_user=user.id)
+
+    orders = Order.objects.filter(printer=printer)
+    order_serializer = OrderSerializer(instance=orders, many=True)
+
+    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_orders_by_user(request: Request):
+    user = request.user
+
+    orders = Order.objects.filter(user=user)
+    order_serializer = OrderSerializer(instance=orders, many=True)
+
+    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
