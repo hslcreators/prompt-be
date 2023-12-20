@@ -1,4 +1,5 @@
 # prompt-be
+
 This is a `Python / Django` project.
 
 <img align="left" alt="Python" width="40px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" />
@@ -112,6 +113,7 @@ urlpatterns = [
 ```
 
 ## App-level URLs
+
 An app URL configuration for a particular app is defined in the `urls.py` file at the app level. Here's an example:
 
 ```python
