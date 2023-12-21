@@ -1,4 +1,5 @@
 # prompt-be
+
 This is a `Python / Django` project.
 
 <img align="left" alt="Python" width="40px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" />
@@ -9,25 +10,39 @@ This is a `Python / Django` project.
 
 ## Getting Started
 
-First, create a virtual environment folder:
+After cloning the repository, here are the things to do:
+
+First, navigate to the folder where the repository was cloned too it should have a python file `manage.py` in it. This is your root_directory.
+
+> Note: The term 'root_directory' is a term used to describe the folder wher `manage.py` is located
+
+Secondly, create a virtual environment folder in the root_directory:
 
 ```bash
-virtualenv env
+python -m venv env
 ```
 
-> Note!! You have to install virtualenv with `pip install virtualenv`
+> Note!! You may have to install virtualenv with the command `pip install virtualenv`
 
-Then , activate the virtual environment and install all the requirements:
+Then , activate the virtual environment :
 
 ```bash
 .\env\Scripts\activate
 ```
 
+> Please note to make use of backslash `\` and not frontslash `/` as seen above.
+
+Now you should see `(env)` on your terminal. This indicates that your virtual environment has been created and activated.
+
+And install all the requirements:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-Then, run the development server:
+You should see all the python requirements installing in your terminal.
+
+Once all the downloads have finished, you can run the server using this command:
 
 ```bash
 python manage.py runserver
@@ -49,7 +64,7 @@ Starting development server at http://127.0.0.1:8000/
 Quit the server with CTRL-BREAK.
 ```
 
-> Note!! If the schema was updated, run the following command to apply the updated changes: `python manage.py runserver`
+> Note!! If the schema was updated, run the following command to apply the updated changes: `python manage.py makemigrations` then `python manage.py migrate`.
 
 Visit `http://127.0.0.1:8000/test/` in your browser just to confirm routes are configured and working properly. If all is working properly, you should get the below response on browser.
 
@@ -59,16 +74,22 @@ Everythings working fine!
 
 ## Environmental Variable
 
-Create a .env file inside the root of your application and include the following content:
+Create a `.env` file inside the `root_directory` and include the following content:
 
 ```bash
-API_KEY=your_api_key
-DATABASE_URL=postgres://your_db_user:your_db_password@localhost:5432/your_db_name
 DEBUG_MODE=True
-SECRET_KEY = the_secret_key
+SECRET_KEY = your_secret_key
+EMAIL_BACKEND = the_email_backend
+EMAIL_HOST = the_email_host
+EMAIL_PORT = the_email_port
+EMAIL_USE_TLS = the_email_tls
+EMAIL_HOST_USER = the_host_email
+EMAIL_HOST_PASSWORD = the_host_email_password
 ```
 
-> Note!! you need to create the database `prompt` yourself before doing any other thing within the app if you need it to work properly. You could use tool like `PgAdmin`
+> Note!! you need to get the values for the Environmental Variables from your Team Lead. <a href='https://github.com/TSavage101'> Bayode </a>
+
+That's as far as the application setup goes.
 
 # Routes
 
@@ -92,10 +113,11 @@ urlpatterns = [
 ```
 
 ## App-level URLs
+
 An app URL configuration for a particular app is defined in the `urls.py` file at the app level. Here's an example:
 
 ```python
-# prompt-be/{app_name}/urls.py
+# prompt-be/apps/{app_name}/urls.py
 
 from django.urls import path
 
