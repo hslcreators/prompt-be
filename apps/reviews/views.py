@@ -102,10 +102,12 @@ def get_reviews(request: Request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def edit_review(request: Request, review_id):
+    user = request.user
+    
     review_data = request.data
     
     try:
-        review = Review.objects.get(id=review_id)
+        review = Review.objects.get(id=review_id, user=user)
     except:
         return Response({'error': 'Review does not exist!'})
     
