@@ -43,4 +43,79 @@ def get_review_by_id(request: Request, review_id: int):
     review_serializer = ReviewSerializer(instance=review)
 
     return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_reviews_for_me(request: Request):
+    user = request.user
     
+    if Printer.objects.filter(user=user).exists():
+        printer = Printer.objects.get(user=user)
+        
+        reviews = Review.objects.filter(printer=printer)
+    else:
+        reviews = Review.objects.filter(user=user)
+        
+    review_serializer = ReviewSerializer(instance=reviews, many=True)
+    
+    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_reviews_for_me(request: Request):
+    user = request.user
+    
+    if Printer.objects.filter(user=user).exists():
+        printer = Printer.objects.get(user=user)
+        
+        reviews = Review.objects.filter(printer=printer)
+    else:
+        reviews = Review.objects.filter(user=user)
+        
+    review_serializer = ReviewSerializer(instance=reviews, many=True)
+    
+    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_reviews(request: Request):
+    printer_id = request.query_params.get("printer", None)
+    
+    if printer_id:
+        try:
+            printer = Printer.objects.get(id=int(printer_id))
+        except:
+            return Response({'error': 'Printer does not exist!'})
+        
+        reviews = Review.objects.filter(printer=printer).order_by('-time_posted')
+    else:
+        reviews = Review.objects.all()
+        
+    review_serializer = ReviewSerializer(instance=reviews, many=True)
+    
+    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def edit_review(request: Request, review_id):
+    review_data = request.data
+    
+    try:
+        review = Review.objects.get(id=review_id)
+    except:
+        return Response({'error': 'Review does not exist!'})
+    
+    review.rating = review_data['rating']
+    review.comment = review_data['comment']
+    
+    review.save()
+    
+    review_serializer = ReviewSerializer(instance=review)
+    
+    return Response(data={
+        "data": review_serializer.data
+    }, status=status.HTTP_200_OK)
