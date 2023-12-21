@@ -33,3 +33,14 @@ def create_review(request: Request, *args, **kwargs):
         "data": review_serializer.data
     }, status=status.HTTP_201_CREATED)
     
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_review_by_id(request: Request, review_id: int):
+
+    review = Review.objects.get(id=review_id)
+    review_serializer = ReviewSerializer(instance=review)
+
+    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+    
