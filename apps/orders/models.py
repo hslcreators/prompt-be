@@ -18,6 +18,7 @@ class Order(models.Model):
     is_complete = models.BooleanField(default=False)
     pay_on_collection = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
+    coloured = models.BooleanField(default=False)
     
     def __str__(self):
         return f'from {self.user} to {self.printer}'
