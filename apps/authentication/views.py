@@ -69,7 +69,7 @@ def login(request: Request):
     if not user.check_password(password):
         raise AuthenticationFailed("Password Incorrect")
 
-    token = Token.objects.get(user=user)
+    token, created = Token.objects.get_or_create(user=user)
 
     response = {
         "user_id": user.id,
