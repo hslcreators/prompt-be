@@ -101,3 +101,24 @@ def get_order_schedule(request: Request, order_id: UUID):
     }
 
     return Response(data=response, status=status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_complete_status(request: Request, order_id: UUID):
+
+    user = request.user
+    printer = Printer.objects.get(user=user)
+
+    order = Order.objects.get(printer=printer, id=order_id)
+
+    complete_status = request.data["is_complete"]
+    order.is_complete = complete_status
+
+    order.save()
+
+    if order.is_complete:
+        return Response({"data": "Order status has been set to completed"}, status=status.HTTP_200_OK)
+
+    return Response({"data": "Order status has been set to incomplete"}, status=status.HTTP_200_OK)
