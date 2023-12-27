@@ -69,7 +69,7 @@ def login(request: Request):
     if not user.check_password(password):
         raise AuthenticationFailed("Password Incorrect")
 
-    token = Token.objects.get(user=user)
+    token, created = Token.objects.get_or_create(user=user)
 
     response = {
         "user_id": user.id,
@@ -133,7 +133,6 @@ def create_printer(request: Request):
         printer = Printer.objects.create(user=user, id_user=user.id,
                                          description=request.data["description"], is_open=request.data["is_open"],
                                          phone_number=request.data["phone_number"], location=request.data["location"],
-                                         average_rating=request.data["average_rating"],
                                          offers_coloured=request.data["offers_coloured"]
                                          )
 
