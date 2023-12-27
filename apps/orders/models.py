@@ -12,7 +12,7 @@ class Order(models.Model):
     document = models.FileField(upload_to='files_to_print', max_length=200, blank=True, null=True)
     no_of_copies = models.IntegerField()
     pages = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     order_time = models.DateTimeField(auto_now_add=True)
     time_expected = models.TimeField()
     is_complete = models.BooleanField(default=False)
