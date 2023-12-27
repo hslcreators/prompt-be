@@ -1,8 +1,12 @@
 from random import randrange
 import datetime
-from rest_framework.exceptions import AuthenticationFailed
 
-from apps.authentication.models import OneTimePassword
+from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.request import Request
+from rest_framework.response import Response
+
+from apps.authentication.models import OneTimePassword, Printer
 from apps.authentication.serializers import OTPSerializer
 
 
@@ -44,3 +48,29 @@ def generate_otp(email, pin):
     otp_serializer = OTPSerializer(data=otp)
     if otp_serializer.is_valid():
         otp_serializer.save()
+
+
+def update_rates(request: Request):
+    user = request.user
+    printer = Printer.objects.get(user=user)
+
+    coloured_rate = request.data["coloured_rate"]
+    uncoloured_rate = request.data["uncoloured_rate"]
+
+    if coloured_rate == "":
+        coloured_rate = printer.coloured_rate
+    if uncoloured_rate == "":
+        uncoloured_rate = printer.uncoloured_rate
+
+    printer.coloured_rate = int(coloured_rate)
+    printer.uncoloured_rate = int(uncoloured_rate)
+
+    printer.save()
+
+    response = {
+        "message": "Rates have been updates",
+        "coloured_rate": printer.coloured_rate,
+        "uncoloured_rate": printer.uncoloured_rate,
+    }
+
+    return Response(data=response, status=status.HTTP_200_OK)

@@ -17,6 +17,7 @@ import datetime
 
 from decouple import config
 
+
 @api_view(["POST"])
 def create_user(request: Request):
     serializer = UserSerializer(data=request.data)
@@ -40,7 +41,7 @@ def create_user(request: Request):
             "token": token.key,
             "data": serializer.data
         }
-        
+
         # TODO: Send mail to user containing the otp pin
         # send_mail(
         #     'Verify your Prompt Account!',
@@ -126,7 +127,6 @@ def generate_otp(request: Request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_printer(request: Request):
-
     user = request.user
     if user.is_verified:
 
@@ -134,7 +134,8 @@ def create_printer(request: Request):
                                          description=request.data["description"], is_open=request.data["is_open"],
                                          phone_number=request.data["phone_number"], location=request.data["location"],
                                          offers_coloured=request.data["offers_coloured"],
-                                         coloured_rate=request.data["coloured_rate"], uncoloured_rate=request.data["uncoloured_rate"]
+                                         coloured_rate=request.data["coloured_rate"],
+                                         uncoloured_rate=request.data["uncoloured_rate"]
                                          )
 
         user.is_printer = True
@@ -145,3 +146,10 @@ def create_printer(request: Request):
 
     else:
         raise AuthenticationFailed("User is not verified by OTP")
+
+
+@api_view(["PUT"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_rates(request: Request):
+    return services.update_rates(request)
