@@ -133,7 +133,8 @@ def create_printer(request: Request):
         printer = Printer.objects.create(user=user, id_user=user.id,
                                          description=request.data["description"], is_open=request.data["is_open"],
                                          phone_number=request.data["phone_number"], location=request.data["location"],
-                                         offers_coloured=request.data["offers_coloured"]
+                                         offers_coloured=request.data["offers_coloured"],
+                                         coloured_rate=request.data["coloured_rate"], uncoloured_rate=request.data["uncoloured_rate"]
                                          )
 
         user.is_printer = True
