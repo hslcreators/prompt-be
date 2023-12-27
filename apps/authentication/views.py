@@ -104,7 +104,13 @@ def verify_token(request: Request):
 
     user.is_verified = True
     user.save()
-    return Response(data=user_serializer.data, status=status.HTTP_200_OK)
+
+    response = {
+        "id": user.id,
+        "email": user.email,
+        "message": "User has been verified"
+    }
+    return Response(data=response, status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
