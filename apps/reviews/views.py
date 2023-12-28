@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.authentication.models import Printer
+from apps.orders.models import Order
 from apps.reviews.models import Review
 from apps.reviews.serializers import ReviewSerializer
 
@@ -25,16 +26,23 @@ def create_review(request: Request, *args, **kwargs):
     try:
         review = Review.objects.get(user=user)
     except:
-        new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
-                          comment=review_request['comment'], time_posted=review_request['time_posted'])
+        if Order.objects.filter(user=user, printer=printer).exists():
 
-        new_review.save()
+            new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
+                              comment=review_request['comment'], time_posted=review_request['time_posted'])
 
-        review_serializer = ReviewSerializer(instance=new_review)
+            new_review.save()
 
-        return Response(data={
-            "data": review_serializer.data
-        }, status=status.HTTP_201_CREATED)
+            review_serializer = ReviewSerializer(instance=new_review)
+
+            return Response(data={
+                "data": review_serializer.data
+            }, status=status.HTTP_201_CREATED)
+
+        else:
+            return Response({"error": "You cannot review someone whose service you haven't used"})
+
+        return Response({"error": "You cannot review someone whose service you've not used before"})
 
     return Response({"error": "You cannot give more than one review"})
     
