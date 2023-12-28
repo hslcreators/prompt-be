@@ -7,6 +7,7 @@ from .views import (
     get_reviews_for_me,
     get_reviews,
     edit_review,
+    delete_review,
 )
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path('me/', get_reviews_for_me, name='Get Reviews for Me'),
     path('<str:review_id>/', get_review_by_id, name='Get Review'),
     path('<str:review_id>/edit/', edit_review, name='Edit Review'),
+    path('<str:review_id>/delete/', delete_review, name='Delete Review'),
 ]
