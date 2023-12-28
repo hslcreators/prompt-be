@@ -30,6 +30,8 @@ class Printer(models.Model):
     location = models.CharField(max_length=225)
     average_rating = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     offers_coloured = models.BooleanField(default=False)
+    coloured_rate = models.IntegerField(default=50)
+    uncoloured_rate = models.IntegerField(default=20)
 
     def __str__(self):
         return self.user.username
