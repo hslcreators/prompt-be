@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.authentication.models import Printer
+from apps.orders.models import Order
 from apps.reviews.models import Review
 from apps.reviews.serializers import ReviewSerializer
 
@@ -22,11 +23,8 @@ def create_review(request: Request, *args, **kwargs):
     except:
         return Response({'error': 'Invalid Printer ID'})
     
-    if Review.objects.filter(user=user, printer=printer).exists():
-        return Response({'message': 'You have already reviewed this user!', 'value': False})
-    else:
-        new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
-                        comment=review_request['comment'], time_posted=review_request['time_posted'])
+    new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
+                      comment=review_request['comment'], time_posted=review_request['time_posted'])
     
     new_review.save()
     
@@ -35,6 +33,7 @@ def create_review(request: Request, *args, **kwargs):
     return Response(data={
         "data": review_serializer.data
     }, status=status.HTTP_201_CREATED)
+    
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -123,16 +122,3 @@ def edit_review(request: Request, review_id):
     return Response(data={
         "data": review_serializer.data
     }, status=status.HTTP_200_OK)
-
-@api_view(["POST"])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def delete_review(request: Request, review_id):
-    try:
-        review = Review.objects.get(id=review_id)
-    except:
-        return Response({'error': 'Invalid Review ID', 'value': False})
-    
-    review.delete()
-    
-    return Response({'error': 'Review deleted successfully!', 'value': True})
