@@ -21,17 +21,22 @@ def create_review(request: Request, *args, **kwargs):
         printer = Printer.objects.get(id=printer_id)
     except:
         return Response({'error': 'Invalid Printer ID'})
-    
-    new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
-                      comment=review_request['comment'], time_posted=review_request['time_posted'])
-    
-    new_review.save()
-    
-    review_serializer = ReviewSerializer(instance=new_review)
-    
-    return Response(data={
-        "data": review_serializer.data
-    }, status=status.HTTP_201_CREATED)
+
+    try:
+        review = Review.objects.get(user=user)
+    except:
+        new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
+                          comment=review_request['comment'], time_posted=review_request['time_posted'])
+
+        new_review.save()
+
+        review_serializer = ReviewSerializer(instance=new_review)
+
+        return Response(data={
+            "data": review_serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+    return Response({"error": "You cannot give more than one review"})
     
 
 @api_view(["GET"])
