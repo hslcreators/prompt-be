@@ -23,13 +23,16 @@ def create_review(request: Request, *args, **kwargs):
     except:
         return Response({'error': 'Invalid Printer ID'})
     
-    if Review.objects.filter(user=user, printer=printer).exists():
-        return Response({'message': 'You have already reviewed this user!', 'value': False})
+    if Order.objects.filter(user=user, printer=printer).exists():
+        if Review.objects.filter(user=user, printer=printer).exists():
+            return Response({'message': 'You have already reviewed this vendor!', 'value': False})
+        else:
+            new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
+                            comment=review_request['comment'], time_posted=review_request['time_posted'])
+        
+        new_review.save()
     else:
-        new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
-                        comment=review_request['comment'], time_posted=review_request['time_posted'])
-    
-    new_review.save()
+        return Response({'message': 'You haven\'t made an order from this vendor! ', 'value': False})
     
     review_serializer = ReviewSerializer(instance=new_review)
     
@@ -102,7 +105,7 @@ def get_reviews(request: Request):
     
     return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
 
-@api_view(["POST"])
+@api_view(["PUT"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def edit_review(request: Request, review_id):
