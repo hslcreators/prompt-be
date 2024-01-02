@@ -159,3 +159,21 @@ def create_printer(request: Request):
 @permission_classes([IsAuthenticated])
 def update_rates(request: Request):
     return services.update_rates(request)
+
+
+@api_view(["POST"])
+def send_reset_password_link(request: Request):
+    email = request.data["email"]
+    user = User.objects.get(email=email)
+
+    token = Token.objects.get_or_create(user=user)
+
+    # TODO: Send link together with token key to the email for continue resetting of password
+
+
+@api_view(["PUT"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def reset_password(request: Request):
+    # TODO: send link to email for details on how to continue resetting password
+    return services.reset_password(request)
