@@ -175,5 +175,4 @@ def send_reset_password_link(request: Request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def reset_password(request: Request):
-    # TODO: send link to email for details on how to continue resetting password
     return services.reset_password(request)
