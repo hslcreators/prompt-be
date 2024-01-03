@@ -19,6 +19,7 @@ class Order(models.Model):
     pay_on_collection = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
     coloured = models.BooleanField(default=False)
+    charge = models.IntegerField(blank=True, null=True)
     
     def __str__(self):
         return f'from {self.user} to {self.printer}'

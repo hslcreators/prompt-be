@@ -6,6 +6,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.authentication.models import Printer
+from apps.orders.models import Order
 from apps.reviews.models import Review
 from apps.reviews.serializers import ReviewSerializer
 
@@ -22,10 +23,16 @@ def create_review(request: Request, *args, **kwargs):
     except:
         return Response({'error': 'Invalid Printer ID'})
     
-    new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
-                      comment=review_request['comment'], time_posted=review_request['time_posted'])
-    
-    new_review.save()
+    if Order.objects.filter(user=user, printer=printer).exists():
+        if Review.objects.filter(user=user, printer=printer).exists():
+            return Response({'message': 'You have already reviewed this vendor!', 'value': False})
+        else:
+            new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
+                            comment=review_request['comment'], time_posted=review_request['time_posted'])
+        
+        new_review.save()
+    else:
+        return Response({'message': 'You haven\'t made an order from this vendor! ', 'value': False})
     
     review_serializer = ReviewSerializer(instance=new_review)
     
@@ -98,7 +105,7 @@ def get_reviews(request: Request):
     
     return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
 
-@api_view(["GET"])
+@api_view(["PUT"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def edit_review(request: Request, review_id):
@@ -121,3 +128,18 @@ def edit_review(request: Request, review_id):
     return Response(data={
         "data": review_serializer.data
     }, status=status.HTTP_200_OK)
+    
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def delete_review(request: Request, review_id):
+    try:
+        review = Review.objects.get(id=review_id)
+    except:
+        return Response({'error': 'Invalid Review ID', 'value': False})
+
+
+    review.delete()
+
+
+    return Response({'error': 'Review deleted successfully!', 'value': True})

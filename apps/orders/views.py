@@ -22,27 +22,28 @@ def create_order(request: Request):
     printer_id = request.data["printer_id"]
     printer = Printer.objects.get(id=printer_id)
 
+    charge = services.order_charge(printer, int(order_request["no_of_copies"]), int(order_request["pages"]),
+                                   order_request["coloured"])
+
     order = Order.objects.create(user=user, printer=printer, document=order_request["document"],
                                  no_of_copies=order_request["no_of_copies"], pages=order_request["pages"],
                                  description=order_request["description"],
                                  time_expected=order_request["time_expected"],
                                  coloured=order_request["coloured"],
-                                 pay_on_collection=order_request["pay_on_collection"])
-    
+                                 pay_on_collection=order_request["pay_on_collection"],
+                                 charge=charge)
+
     order.save()
 
     order_serializer = OrderSerializer(instance=order)
 
-    return Response(data={
-        "data": order_serializer.data
-    }, status=status.HTTP_201_CREATED)
+    return Response(data={"data": order_serializer.data}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_order_by_id(request: Request, order_id: UUID):
-
     order = Order.objects.get(id=order_id)
     order_serializer = OrderSerializer(instance=order)
 
@@ -78,25 +79,15 @@ def get_orders_by_user(request: Request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_order_schedule(request: Request, order_id: UUID):
-
     order = Order.objects.get(id=order_id)
     order_serializer = OrderSerializer(instance=order)
     order_data = order_serializer.data
-
-    charge = services.charge(order.no_of_copies, int(order.pages))
-
-    if order.coloured:
-        charge *= 50
-    else:
-        charge *= 20
-
-    # TODO: ask how much these actually cost
 
     response = {
         "order_id": order_id,
         "pickup_time": order_data["time_expected"],
         "is_complete": order_data["is_complete"],
-        "charge": charge,
+        "charge": order.charge,
         "paid": order_data["paid"]
     }
 
@@ -107,7 +98,6 @@ def get_order_schedule(request: Request, order_id: UUID):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_complete_status(request: Request, order_id: UUID):
-
     user = request.user
     printer = Printer.objects.get(user=user)
 
