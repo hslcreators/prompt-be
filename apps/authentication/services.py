@@ -77,6 +77,21 @@ def update_rates(request: Request):
     return Response(data=response, status=status.HTTP_200_OK)
 
 
+def reset_password(request: Request):
+    user = request.user
+    new_password = request.data["password"]
+    confirm_new_password = request.data["confirm_password"]
+
+    if new_password == confirm_new_password:
+        if not user.check_password(new_password):
+            user.set_password(new_password)
+            user.save()
+            return Response({"data": "Password has been successfully reset"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Password cannot be the same as the old one"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response({"error": "Passwords do not Match"}, status=status.HTTP_400_BAD_REQUEST)
+
 def logout(request: Request):
     user = request.user
 
