@@ -183,3 +183,10 @@ def reset_password(request: Request):
 @permission_classes([IsAuthenticated])
 def logout(request: Request):
     return services.logout(request)
+
+
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_password(request: Request):
+    return services.change_password(request)
