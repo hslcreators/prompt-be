@@ -2,6 +2,7 @@ from random import randrange
 import datetime
 
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -90,3 +91,10 @@ def reset_password(request: Request):
             return Response({"error": "Password cannot be the same as the old one"}, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response({"error": "Passwords do not Match"}, status=status.HTTP_400_BAD_REQUEST)
+
+def logout(request: Request):
+    user = request.user
+
+    Token.objects.get(user=user).delete()
+
+    return Response({"message": "User has been successfully logged out"})

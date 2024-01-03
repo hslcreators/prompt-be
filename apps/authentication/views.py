@@ -176,3 +176,10 @@ def send_reset_password_link(request: Request):
 @permission_classes([IsAuthenticated])
 def reset_password(request: Request):
     return services.reset_password(request)
+
+
+@api_view(["DELETE"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request: Request):
+    return services.logout(request)
