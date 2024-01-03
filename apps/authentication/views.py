@@ -159,3 +159,10 @@ def create_printer(request: Request):
 @permission_classes([IsAuthenticated])
 def update_rates(request: Request):
     return services.update_rates(request)
+
+
+@api_view(["DELETE"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request: Request):
+    return services.logout(request)

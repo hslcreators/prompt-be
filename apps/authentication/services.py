@@ -2,6 +2,7 @@ from random import randrange
 import datetime
 
 from rest_framework import status
+from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -74,3 +75,11 @@ def update_rates(request: Request):
     }
 
     return Response(data=response, status=status.HTTP_200_OK)
+
+
+def logout(request: Request):
+    user = request.user
+
+    Token.objects.get(user=user).delete()
+
+    return Response({"message": "User has been successfully logged out"})
