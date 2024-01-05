@@ -43,13 +43,13 @@ def create_user(request: Request):
         }
 
         # TODO: Send mail to user containing the otp pin
-        # send_mail(
-        #     'Verify your Prompt Account!',
-        #     f'Here is you One Time Password - {pin}',
-        #     'bayodeiretomiwa@gmail.com',
-        #     ['email'],
-        #     fail_silently=False,
-        # )
+        send_mail(
+            'Verify your Prompt Account!',
+            f'Here is you One Time Password - {pin}',
+            'bayodeiretomiwa@gmail.com',
+            [email],
+            fail_silently=False,
+        )
 
         return Response(data=data, status=status.HTTP_201_CREATED)
 
