@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
-import dj_database_url
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -45,9 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
+    'rest_framework_swagger',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'channels',
+    'drf_yasg',
     
     'apps.authentication',
     'apps.core',
@@ -57,6 +58,8 @@ INSTALLED_APPS = [
     'apps.notifications',
     
 ]
+
+REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

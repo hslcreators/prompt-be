@@ -13,11 +13,12 @@ from .models import User, OneTimePassword, Printer
 from rest_framework import status
 from .services import generate_pin
 from rest_framework.exceptions import AuthenticationFailed
-import datetime
-
-from decouple import config
+from drf_yasg.utils import swagger_auto_schema
 
 
+@swagger_auto_schema(
+    method='post', request_body=UserSerializer(many=True), operation_id='Create User', responses={201: UserSerializer(many=True)}
+)
 @api_view(["POST"])
 def create_user(request: Request):
     serializer = UserSerializer(data=request.data)
@@ -42,14 +43,14 @@ def create_user(request: Request):
             "data": serializer.data
         }
 
-        # TODO: Send mail to user containing the otp pin
-        send_mail(
-            'Verify your Prompt Account!',
-            f'Here is you One Time Password - {pin}',
-            'bayodeiretomiwa@gmail.com',
-            [email],
-            fail_silently=False,
-        )
+        # # TODO: Send mail to user containing the otp pin
+        # send_mail(
+        #     'Verify your Prompt Account!',
+        #     f'Here is you One Time Password - {pin}',
+        #     'bayodeiretomiwa@gmail.com',
+        #     [email],
+        #     fail_silently=False,
+        # )
 
         return Response(data=data, status=status.HTTP_201_CREATED)
 

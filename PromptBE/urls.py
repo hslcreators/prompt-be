@@ -14,8 +14,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
+from django.urls import include
 
 from django.conf import settings
 from django.conf.urls.static import static
@@ -23,6 +23,21 @@ from django.conf.urls.static import static
 from apps.core.views import test
 
 from apps.core.admin import prompt_admin
+from rest_framework_swagger.views import get_swagger_view
+
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework import permissions
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Documentation for Prompt Backend",
+        default_version='v1',
+        description="This is a well detailed documentation for Prompt Backend",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -35,6 +50,7 @@ urlpatterns = [
     path('api/orders/', include('apps.orders.urls')),
     path('api/reviews/', include('apps.reviews.urls')),
     path('api/wallet/', include('apps.wallet.urls')),
+    path('docs/', schema_view.with_ui('swagger', cache_timeout=0)),
 ]
 
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,
