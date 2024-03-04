@@ -6,6 +6,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from apps.authentication.responses import SignUpResponse
+from apps.authentication.requests import LoginRequest, SignUpRequest
+
 from . import services
 from .serializers import UserSerializer, OTPSerializer, PrinterSerializer
 from rest_framework.authtoken.models import Token
@@ -17,7 +20,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 
 @swagger_auto_schema(
-    method='post', request_body=UserSerializer(many=True), operation_id='Create User', responses={201: UserSerializer(many=True)}
+    method='post', request_body=SignUpRequest(many=False), operation_id='Create User', responses={201: SignUpResponse(many=False)}
 )
 @api_view(["POST"])
 def create_user(request: Request):
@@ -40,7 +43,7 @@ def create_user(request: Request):
             "user_id": user.id,
             "otp": pin,
             "token": token.key,
-            "data": serializer.data
+            "username": user.username
         }
 
         # # TODO: Send mail to user containing the otp pin
@@ -57,6 +60,9 @@ def create_user(request: Request):
     return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(
+    method='post', request_body=LoginRequest(many=False), operation_id='Create User', responses={201: SignUpResponse(many=False)}
+)
 @api_view(["POST"])
 def login(request: Request):
     email = request.data["email"]
@@ -75,7 +81,6 @@ def login(request: Request):
 
     response = {
         "user_id": user.id,
-        "user": serializer.data,
         "token": token.key
     }
 
