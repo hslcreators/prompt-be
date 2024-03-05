@@ -84,7 +84,7 @@ def login(request: Request):
         "token": token.key
     }
 
-    return Response(response, status=status.HTTP_200_OK)
+    return Response(data=response, status=status.HTTP_200_OK)
 
 
 @swagger_auto_schema(

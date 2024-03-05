@@ -43,7 +43,7 @@ def create_order(request: Request):
 
     order_serializer = OrderSerializer(instance=order)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_201_CREATED)
+    return Response(data=order_serializer.data, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(
     method='get', request_body=None, operation_id='Get Order By Id', responses={200: OrderSerializer(many=False)}
@@ -55,7 +55,7 @@ def get_order_by_id(request: Request, order_id: UUID):
     order = Order.objects.get(id=order_id)
     order_serializer = OrderSerializer(instance=order)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
     method='get', request_body=None, operation_id='Get Order By Printer', responses={200: OrderSerializer(many=True)}
@@ -70,7 +70,7 @@ def get_orders_by_printer(request: Request):
     orders = Order.objects.filter(printer=printer)
     order_serializer = OrderSerializer(instance=orders, many=True)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
     method='get', request_body=None, operation_id='Get Order By User', responses={200: OrderSerializer(many=True)}
@@ -84,7 +84,7 @@ def get_orders_by_user(request: Request):
     orders = Order.objects.filter(user=user)
     order_serializer = OrderSerializer(instance=orders, many=True)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
     method='get', request_body=None, operation_id='Get Order Schedule', responses={200: OrderScheduleResponse(many=False)}

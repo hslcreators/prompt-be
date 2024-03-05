@@ -8,11 +8,16 @@ from rest_framework.response import Response
 from apps.authentication.models import Printer
 from apps.orders.models import Order
 from apps.reviews.models import Review
+from apps.reviews.requests import CreateReviewRequest, EditReviewRequest
+from apps.reviews.responses import DeleteReviewResponse
 from apps.reviews.serializers import ReviewSerializer
 from . import services
+from drf_yasg.utils import swagger_auto_schema
 
 
-# Create your views here.
+@swagger_auto_schema(
+    method='post', request_body=CreateReviewRequest(many=False), operation_id='Create Review', responses={201: ReviewSerializer(many=False)}
+)
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -46,11 +51,11 @@ def create_review(request: Request, *args, **kwargs):
 
     printer.save()
 
-    return Response(data={
-        "data": review_serializer.data
-    }, status=status.HTTP_201_CREATED)
+    return Response(data=review_serializer.data, status=status.HTTP_201_CREATED)
 
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Review By Id', responses={200: ReviewSerializer(many=False)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -58,9 +63,11 @@ def get_review_by_id(request: Request, review_id: int):
     review = Review.objects.get(id=review_id)
     review_serializer = ReviewSerializer(instance=review)
 
-    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=review_serializer.data, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Review For Me', responses={200: ReviewSerializer(many=True)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -76,27 +83,11 @@ def get_reviews_for_me(request: Request):
 
     review_serializer = ReviewSerializer(instance=reviews, many=True)
 
-    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=review_serializer.data, status=status.HTTP_200_OK)
 
-
-@api_view(["GET"])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def get_reviews_for_me(request: Request):
-    user = request.user
-
-    if Printer.objects.filter(user=user).exists():
-        printer = Printer.objects.get(user=user)
-
-        reviews = Review.objects.filter(printer=printer)
-    else:
-        reviews = Review.objects.filter(user=user)
-
-    review_serializer = ReviewSerializer(instance=reviews, many=True)
-
-    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
-
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Reviews', responses={200: ReviewSerializer(many=True)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -115,9 +106,11 @@ def get_reviews(request: Request):
 
     review_serializer = ReviewSerializer(instance=reviews, many=True)
 
-    return Response(data={"data": review_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=review_serializer.data, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='put', request_body=EditReviewRequest(many=False), operation_id='Edit Review', responses={200: ReviewSerializer(many=False)}
+)
 @api_view(["PUT"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -142,11 +135,11 @@ def edit_review(request: Request, review_id):
 
     services.calculate_average_rating(review)
 
-    return Response(data={
-        "data": review_serializer.data
-    }, status=status.HTTP_200_OK)
+    return Response(data=review_serializer.data, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='delete', request_body=None, operation_id='Delete Review', responses={200: DeleteReviewResponse(many=False)}
+)
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -159,4 +152,4 @@ def delete_review(request: Request, review_id):
     review.delete()
     services.calculate_average_rating(review)
 
-    return Response({'error': 'Review deleted successfully!', 'value': True})
+    return Response({'message': 'Review deleted successfully!', 'value': True})
