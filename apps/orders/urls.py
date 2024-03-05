@@ -7,5 +7,6 @@ urlpatterns = [
     path("user/", views.get_orders_by_user, name="Get ALl Orders By Users"),
     path("<order_id>/", views.get_order_by_id, name="Get Order By Order Id"),
     path("schedule/<order_id>", views.get_order_schedule, name="Get Order Schedule"),
-    path("update/<order_id>/", views.update_complete_status, name="Update Order Status")
+    path("update/<order_id>/", views.update_complete_status, name="Update Order Status"),
+    path("active", views.get_active_orders, name="Get Active Orders")
 ]

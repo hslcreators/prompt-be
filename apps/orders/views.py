@@ -128,3 +128,16 @@ def update_complete_status(request: Request, order_id: UUID):
         return Response({"data": "Order status has been set to completed"}, status=status.HTTP_200_OK)
 
     return Response({"data": "Order status has been set to incomplete"}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_active_orders(request: Request):
+    user = request.user
+    printer = Printer.objects.get(user=user)
+
+    orders = Order.objects.filter(printer=printer, is_complete=False)
+    order_serializer = OrderSerializer(instance=orders, many=True)
+
+    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
