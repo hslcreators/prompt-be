@@ -9,10 +9,16 @@ from rest_framework.response import Response
 
 from apps.authentication.models import Printer
 from apps.orders.models import Order
+from apps.orders.requests import CreateOrderRequest, UpdateStatusRequest
+from apps.orders.responses import OrderScheduleResponse, UpdateStatusResponse
 from apps.orders.serializers import OrderSerializer
 from . import services
+from drf_yasg.utils import swagger_auto_schema
 
 
+@swagger_auto_schema(
+    method='post', request_body=CreateOrderRequest(many=False), operation_id='Create Order', responses={201: OrderSerializer(many=False)}
+)
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -37,9 +43,11 @@ def create_order(request: Request):
 
     order_serializer = OrderSerializer(instance=order)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_201_CREATED)
+    return Response(data=order_serializer.data, status=status.HTTP_201_CREATED)
 
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Order By Id', responses={200: OrderSerializer(many=False)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -47,9 +55,11 @@ def get_order_by_id(request: Request, order_id: UUID):
     order = Order.objects.get(id=order_id)
     order_serializer = OrderSerializer(instance=order)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Order By Printer', responses={200: OrderSerializer(many=True)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -60,9 +70,11 @@ def get_orders_by_printer(request: Request):
     orders = Order.objects.filter(printer=printer)
     order_serializer = OrderSerializer(instance=orders, many=True)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Order By User', responses={200: OrderSerializer(many=True)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -72,9 +84,11 @@ def get_orders_by_user(request: Request):
     orders = Order.objects.filter(user=user)
     order_serializer = OrderSerializer(instance=orders, many=True)
 
-    return Response(data={"data": order_serializer.data}, status=status.HTTP_200_OK)
+    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Order Schedule', responses={200: OrderScheduleResponse(many=False)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -93,7 +107,9 @@ def get_order_schedule(request: Request, order_id: UUID):
 
     return Response(data=response, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='put', request_body=UpdateStatusRequest(many=False), operation_id='Update Complete Status', responses={200: UpdateStatusResponse(many=False)}
+)
 @api_view(["PUT"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])

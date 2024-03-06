@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 
-import dj_database_url
 from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -45,9 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
+    'rest_framework_swagger',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
     'channels',
+    'drf_yasg',
     
     'apps.authentication',
     'apps.core',
@@ -57,6 +58,8 @@ INSTALLED_APPS = [
     'apps.notifications',
     
 ]
+
+REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -131,8 +134,15 @@ WSGI_APPLICATION = 'PromptBE.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': dj_database_url.parse(config("DATABASE_URL"))
+# }
+
 DATABASES = {
-    'default': dj_database_url.parse(config("DATABASE_URL"))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # Custom User Model
@@ -185,9 +195,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # EMAIL settings
-# EMAIL_BACKEND = f'{config('EMAIL_BACKEND')}'
-# EMAIL_HOST = f'{config('EMAIL_HOST')}'
-# EMAIL_PORT = f'{config('EMAIL_PORT')}'  # or the appropriate port
-# EMAIL_USE_TLS = f'{config('EMAIL_USE_TLS')}'
-# EMAIL_HOST_USER = f'{config('EMAIL_HOST_USER')}'
-# EMAIL_HOST_PASSWORD = f'{config('EMAIL_HOST_PASSWORD')}'
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')  # or the appropriate port
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
