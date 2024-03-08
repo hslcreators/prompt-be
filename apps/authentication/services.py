@@ -92,9 +92,28 @@ def reset_password(request: Request):
     else:
         return Response({"error": "Passwords do not Match"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 def logout(request: Request):
     user = request.user
 
     Token.objects.get(user=user).delete()
 
     return Response({"message": "User has been successfully logged out"})
+
+
+def change_password(request: Request):
+    user = request.user
+    former_password = request.data["former_password"]
+    new_password = request.data["new_password"]
+    confirm_password = request.data["confirm_password"]
+
+    if not user.check_password(former_password):
+        return Response({"error": "Incorrect Password"}, status=status.HTTP_400_BAD_REQUEST)
+    elif not new_password == confirm_password:
+        return Response({"error": "Passwords do not Match"}, status=status.HTTP_400_BAD_REQUEST)
+    elif user.check_password(new_password):
+        return Response({"error": "Passwords cannot be the same as the former"}, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        user.set_password(new_password)
+        user.save()
+        return Response({"message": "Password has been successfully changed"}, status=status.HTTP_200_OK)

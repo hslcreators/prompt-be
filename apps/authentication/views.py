@@ -6,6 +6,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from apps.authentication.responses import ChangePasswordResponse, GenerateTokenResponse, LogoutResponse, ResetPasswordResponse, SignUpResponse, UpdateRatesResponse, VerifyTokenResponse
+from apps.authentication.requests import ChangePasswordRequest, CreatePrinterRequest, LoginRequest, ResetPasswordRequest, SignUpRequest, UpdateRatesRequest, VerifyTokenRequest
+
 from . import services
 from .serializers import UserSerializer, OTPSerializer, PrinterSerializer
 from rest_framework.authtoken.models import Token
@@ -13,11 +16,12 @@ from .models import User, OneTimePassword, Printer
 from rest_framework import status
 from .services import generate_pin
 from rest_framework.exceptions import AuthenticationFailed
-import datetime
-
-from decouple import config
+from drf_yasg.utils import swagger_auto_schema
 
 
+@swagger_auto_schema(
+    method='post', request_body=SignUpRequest(many=False), operation_id='Create User', responses={201: SignUpResponse(many=False)}
+)
 @api_view(["POST"])
 def create_user(request: Request):
     serializer = UserSerializer(data=request.data)
@@ -39,15 +43,15 @@ def create_user(request: Request):
             "user_id": user.id,
             "otp": pin,
             "token": token.key,
-            "data": serializer.data
+            "username": user.username
         }
 
-        # TODO: Send mail to user containing the otp pin
+        # # TODO: Send mail to user containing the otp pin
         # send_mail(
         #     'Verify your Prompt Account!',
         #     f'Here is you One Time Password - {pin}',
         #     'bayodeiretomiwa@gmail.com',
-        #     ['email'],
+        #     [email],
         #     fail_silently=False,
         # )
 
@@ -56,6 +60,9 @@ def create_user(request: Request):
     return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@swagger_auto_schema(
+    method='post', request_body=LoginRequest(many=False), operation_id='Login', responses={200: SignUpResponse(many=False)}
+)
 @api_view(["POST"])
 def login(request: Request):
     email = request.data["email"]
@@ -74,13 +81,15 @@ def login(request: Request):
 
     response = {
         "user_id": user.id,
-        "user": serializer.data,
         "token": token.key
     }
 
-    return Response(response, status=status.HTTP_200_OK)
+    return Response(data=response, status=status.HTTP_200_OK)
 
 
+@swagger_auto_schema(
+    method='post', request_body=VerifyTokenRequest(many=False), operation_id='Verify Token', responses={200: VerifyTokenResponse(many=False)}
+)
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -113,6 +122,9 @@ def verify_token(request: Request):
     return Response(data=response, status=status.HTTP_200_OK)
 
 
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Generate OTP', responses={200: GenerateTokenResponse(many=False)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -129,6 +141,9 @@ def generate_otp(request: Request):
     }, status=status.HTTP_200_OK)
 
 
+@swagger_auto_schema(
+    method='post', request_body=CreatePrinterRequest(many=False), operation_id='Create Printer', responses={201: PrinterSerializer(many=False)}
+)
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -154,12 +169,14 @@ def create_printer(request: Request):
         raise AuthenticationFailed("User is not verified by OTP")
 
 
+@swagger_auto_schema(
+    method='put', request_body=UpdateRatesRequest(many=False), operation_id='Update Rates', responses={200: UpdateRatesResponse(many=False)}
+)
 @api_view(["PUT"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def update_rates(request: Request):
     return services.update_rates(request)
-
 
 @api_view(["POST"])
 def send_reset_password_link(request: Request):
@@ -170,16 +187,29 @@ def send_reset_password_link(request: Request):
 
     # TODO: Send link together with token key to the email for continue resetting of password
 
-
+@swagger_auto_schema(
+    method='put', request_body=ResetPasswordRequest(many=False), operation_id='Reset Password', responses={200: ResetPasswordResponse(many=False)}
+)
 @api_view(["PUT"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def reset_password(request: Request):
     return services.reset_password(request)
 
-
+@swagger_auto_schema(
+    method='delete', request_body=None, operation_id='Logout', responses={200: LogoutResponse(many=False)}
+)
 @api_view(["DELETE"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def logout(request: Request):
     return services.logout(request)
+
+@swagger_auto_schema(
+    method='post', request_body=ChangePasswordRequest(many=False), operation_id='Change Password', responses={200: ChangePasswordResponse(many=False)}
+)
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def change_password(request: Request):
+    return services.change_password(request)
