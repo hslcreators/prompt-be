@@ -1,13 +1,6 @@
-import datetime
-
 from django.db import models
-from datetime import timedelta
-import time
-from django.utils import timezone
 
 from django.contrib.auth.models import AbstractUser
-
-import uuid
 
 
 # Create your models here.
@@ -16,9 +9,6 @@ class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='pfps', default='user_def.jpg')
     is_printer = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
-    account_number = models.DecimalField(decimal_places=0, max_digits=20, blank=True, null=True)
-    bank_name = models.CharField(max_length=255, blank=True, null=True)
-    account_name = models.CharField(max_length=255, blank=True, null=True)
 
 
 class Printer(models.Model):
@@ -32,13 +22,16 @@ class Printer(models.Model):
     offers_coloured = models.BooleanField(default=False)
     coloured_rate = models.IntegerField(default=50)
     uncoloured_rate = models.IntegerField(default=20)
+    account_number = models.DecimalField(decimal_places=0, max_digits=20, blank=True, null=True)
+    bank_name = models.CharField(max_length=255, blank=True, null=True)
+    account_name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.user.username
 
 
 class OneTimePassword(models.Model):
-    otp = models.CharField(max_length=5, blank=True)
+    otp = models.CharField(max_length=7, blank=True)
     email = models.EmailField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     expiry_date = models.DateTimeField(auto_now=True)
