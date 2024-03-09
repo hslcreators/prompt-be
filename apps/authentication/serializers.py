@@ -18,4 +18,4 @@ class PrinterSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = Printer
         fields = ["id", "user", "id_user", "description", "is_open", "phone_number", "location", "average_rating",
-                  "offers_coloured", "uncoloured_rate", "coloured_rate"]
+                  "offers_coloured", "uncoloured_rate", "coloured_rate", "account_number", "bank_name", "account_name"]

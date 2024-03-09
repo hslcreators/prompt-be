@@ -22,6 +22,9 @@ class CreatePrinterRequest(serializers.Serializer):
     offers_coloured = serializers.BooleanField()
     coloured_rate = serializers.IntegerField()
     uncoloured_rate = serializers.IntegerField()
+    account_number = serializers.DecimalField(decimal_places=0, max_digits=20)
+    bank_name = serializers.CharField()
+    account_name = serializers.CharField()
 
 class UpdateRatesRequest(serializers.Serializer):
     coloured_rate = serializers.CharField()
