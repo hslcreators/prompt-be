@@ -107,6 +107,9 @@ CSRF_TRUSTED_ORIGINS = [
     
     "http://prompt.vercel.app",
     "https://prompt.vercel.app",
+
+    "http://promptbe.onrender.com",
+    "https://promptbe.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
