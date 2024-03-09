@@ -36,7 +36,6 @@ def create_order(request: Request):
                                  description=order_request["description"],
                                  time_expected=order_request["time_expected"],
                                  coloured=order_request["coloured"],
-                                 pay_on_collection=order_request["pay_on_collection"],
                                  charge=charge)
 
     order.save()
