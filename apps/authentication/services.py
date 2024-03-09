@@ -12,7 +12,7 @@ from apps.authentication.serializers import OTPSerializer
 
 
 def generate_pin():
-    return randrange(1000, 10000)
+    return randrange(100000, 1000000)
 
 
 def verify_otp(otp, otp_serializer, request_otp):

@@ -31,7 +31,7 @@ class Printer(models.Model):
 
 
 class OneTimePassword(models.Model):
-    otp = models.CharField(max_length=5, blank=True)
+    otp = models.CharField(max_length=7, blank=True)
     email = models.EmailField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     expiry_date = models.DateTimeField(auto_now=True)
