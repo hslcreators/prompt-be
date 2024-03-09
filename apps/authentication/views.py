@@ -32,7 +32,8 @@ def create_user(request: Request):
         services.generate_otp(email=email, pin=pin)
 
         serializer.save()
-        user = User.objects.get(username=request.data["username"])
+
+        user = User.objects.get(email=request.data["email"])
         user.set_password(request.data["password"])
 
         user.save()
@@ -43,7 +44,8 @@ def create_user(request: Request):
             "user_id": user.id,
             "otp": pin,
             "token": token.key,
-            "username": user.username
+            "email": user.email,
+            "is_verified": user.is_verified
         }
 
         # # TODO: Send mail to user containing the otp pin
@@ -69,7 +71,6 @@ def login(request: Request):
     password = request.data["password"]
 
     user = User.objects.filter(email=email, is_verified=True).first()
-    serializer = UserSerializer(instance=user)
 
     if user is None:
         raise AuthenticationFailed("User Not Found")

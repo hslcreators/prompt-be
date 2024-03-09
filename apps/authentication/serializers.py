@@ -5,8 +5,7 @@ from .models import User, OneTimePassword, Printer
 class UserSerializer(serializers.ModelSerializer):
     class Meta(object):
         model = User
-        fields = ["username", "first_name", "last_name", "email", "date_joined", "profile_picture", "is_printer",
-                  "is_verified", "account_number", "bank_name", "account_name"]
+        fields = ["username", "first_name", "last_name", "email", "date_joined", "profile_picture", "is_printer", "is_verified"]
 
 
 class OTPSerializer(serializers.ModelSerializer):
