@@ -1,5 +1,4 @@
 from apps.authentication.models import Printer
-from apps.orders.models import Order
 
 
 def order_charge(printer: Printer, no_of_copies: int, pages: int, coloured: bool):

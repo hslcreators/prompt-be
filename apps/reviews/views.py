@@ -35,8 +35,7 @@ def create_review(request: Request, *args, **kwargs):
             return Response({'message': 'You have already reviewed this vendor!', 'value': False})
         else:
             new_review = Review.objects.create(user=user, printer=printer, rating=review_request['rating'],
-                                               comment=review_request['comment'],
-                                               time_posted=review_request['time_posted'])
+                                               comment=review_request['comment'])
 
         new_review.save()
     else:

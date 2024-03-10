@@ -16,7 +16,6 @@ class Order(models.Model):
     order_time = models.DateTimeField(auto_now_add=True)
     time_expected = models.TimeField()
     is_complete = models.BooleanField(default=False)
-    pay_on_collection = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
     coloured = models.BooleanField(default=False)
     charge = models.IntegerField(blank=True, null=True)

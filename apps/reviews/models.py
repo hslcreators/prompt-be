@@ -11,7 +11,8 @@ class Review(models.Model):
     printer = models.ForeignKey(Printer, on_delete=models.CASCADE)
     rating = models.IntegerField()
     comment = models.TextField()
-    time_posted = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f'{self.user} wrote a review on {self.printer}'
