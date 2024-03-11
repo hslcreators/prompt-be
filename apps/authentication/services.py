@@ -8,7 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.authentication.models import OneTimePassword, Printer
-from apps.authentication.serializers import OTPSerializer
+from apps.authentication.serializers import OTPSerializer, PrinterSerializer
 
 
 def generate_pin():
@@ -117,3 +117,9 @@ def change_password(request: Request):
         user.set_password(new_password)
         user.save()
         return Response({"message": "Password has been successfully changed"}, status=status.HTTP_200_OK)
+    
+def find_printer_by_id(request: Request, printer_id: int):
+    printer = Printer.objects.get(id=printer_id)
+    printer_serializer = PrinterSerializer(instance=printer)
+
+    return Response(data=printer_serializer.data, status=status.HTTP_200_OK)

@@ -217,3 +217,12 @@ def logout(request: Request):
 @permission_classes([IsAuthenticated])
 def change_password(request: Request):
     return services.change_password(request)
+
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Printer By Id', responses={200: PrinterSerializer(many=False)}
+)
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def find_printer_by_id(request: Request, printer_id: int):
+    return services.find_printer_by_id(request, printer_id)
