@@ -7,7 +7,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.authentication.responses import ChangePasswordResponse, GenerateTokenResponse, LogoutResponse, ResetPasswordResponse, SignUpResponse, UpdateRatesResponse, VerifyTokenResponse
-from apps.authentication.requests import ChangePasswordRequest, CreatePrinterRequest, LoginRequest, ResetPasswordRequest, SignUpRequest, UpdateRatesRequest, VerifyTokenRequest
+from apps.authentication.requests import ChangePasswordRequest, CreatePrinterRequest, GetPrinterByLocationRequest, LoginRequest, ResetPasswordRequest, SignUpRequest, UpdateRatesRequest, VerifyTokenRequest
 
 from . import services
 from .serializers import UserSerializer, OTPSerializer, PrinterSerializer
@@ -226,3 +226,12 @@ def change_password(request: Request):
 @permission_classes([IsAuthenticated])
 def find_printer_by_id(request: Request, printer_id: int):
     return services.find_printer_by_id(request, printer_id)
+
+@swagger_auto_schema(
+    method='post', request_body=GetPrinterByLocationRequest, operation_id='Get Printer By Location', responses={200: PrinterSerializer(many=False)}
+)
+@api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def find_printers_by_location(request: Request):
+    return services.find_printers_by_location(request)

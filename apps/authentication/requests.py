@@ -38,3 +38,6 @@ class ChangePasswordRequest(serializers.Serializer):
     former_password = serializers.CharField()
     new_password = serializers.CharField()
     confirm_password = serializers.CharField()
+
+class GetPrinterByLocationRequest(serializers.Serializer):
+    location = serializers.CharField()

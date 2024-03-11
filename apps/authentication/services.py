@@ -123,3 +123,10 @@ def find_printer_by_id(request: Request, printer_id: int):
     printer_serializer = PrinterSerializer(instance=printer)
 
     return Response(data=printer_serializer.data, status=status.HTTP_200_OK)
+
+def find_printers_by_location(request: Request):
+    location = request.data["location"]
+    printers = Printer.objects.filter(location=location.lower())
+    printer_serializer = PrinterSerializer(instance=printers, many=True)
+
+    return Response(data=printer_serializer.data, status=status.HTTP_200_OK)

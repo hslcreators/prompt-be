@@ -12,5 +12,6 @@ urlpatterns = [
     path("user/send-reset-password-link/", views.send_reset_password_link, name="Send Reset Password Link"),
     path("user/logout", views.logout, name="Log Out"),
     path("user/change-password", views.change_password, name="Change Password"),
-    path("vendor/<printer_id>", views.find_printer_by_id, name="Find Printer By Id")
+    path("vendor/<printer_id>", views.find_printer_by_id, name="Find Printer By Id"),
+    path("vendor", views.find_printers_by_location, name="Find Printer By Location")
 ]
