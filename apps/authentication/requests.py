@@ -16,7 +16,6 @@ class VerifyTokenRequest(serializers.Serializer):
 
 class CreatePrinterRequest(serializers.Serializer):
     description = serializers.CharField()
-    is_open = serializers.BooleanField()
     phone_number = serializers.CharField()
     location = serializers.CharField()
     offers_coloured = serializers.BooleanField()

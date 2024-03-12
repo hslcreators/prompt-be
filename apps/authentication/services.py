@@ -118,7 +118,7 @@ def change_password(request: Request):
         user.save()
         return Response({"message": "Password has been successfully changed"}, status=status.HTTP_200_OK)
     
-def find_printer_by_id(request: Request, printer_id: int):
+def find_printer_by_id(printer_id: int):
     printer = Printer.objects.get(id=printer_id)
     printer_serializer = PrinterSerializer(instance=printer)
 
@@ -127,6 +127,12 @@ def find_printer_by_id(request: Request, printer_id: int):
 def find_printers_by_location(request: Request):
     location = request.data["location"]
     printers = Printer.objects.filter(location=location.lower())
+    printers_serializer = PrinterSerializer(instance=printers, many=True)
+
+    return Response(data=printers_serializer.data, status=status.HTTP_200_OK)
+
+def find_all_printers():
+    printers = Printer.objects.all()
     printer_serializer = PrinterSerializer(instance=printers, many=True)
 
-    return Response(data=printer_serializer.data, status=status.HTTP_200_OK)
+    return Response(data=printer_serializer, status=status.HTTP_200_OK)

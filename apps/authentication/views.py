@@ -153,8 +153,8 @@ def create_printer(request: Request):
     if user.is_verified:
 
         printer = Printer.objects.create(user=user, id_user=user.id,
-                                         description=request.data["description"], is_open=request.data["is_open"],
-                                         phone_number=request.data["phone_number"], location=request.data["location"],
+                                         description=request.data["description"],
+                                         phone_number=request.data["phone_number"], location=request.data["location"].lower(),
                                          offers_coloured=request.data["offers_coloured"],
                                          coloured_rate=request.data["coloured_rate"],
                                          uncoloured_rate=request.data["uncoloured_rate"],
@@ -225,13 +225,22 @@ def change_password(request: Request):
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def find_printer_by_id(request: Request, printer_id: int):
-    return services.find_printer_by_id(request, printer_id)
+    return services.find_printer_by_id(printer_id)
 
 @swagger_auto_schema(
-    method='post', request_body=GetPrinterByLocationRequest, operation_id='Get Printer By Location', responses={200: PrinterSerializer(many=False)}
+    method='post', request_body=GetPrinterByLocationRequest, operation_id='Get Printers By Location', responses={200: PrinterSerializer(many=True)}
 )
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def find_printers_by_location(request: Request):
     return services.find_printers_by_location(request)
+
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Find All Printers', responses={200: PrinterSerializer(many=True)}
+)
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def find_all_printers(request: Request):
+    return services.find_all_printers()
