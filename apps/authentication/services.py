@@ -126,7 +126,7 @@ def find_printer_by_id(printer_id: int):
 
 def find_printers_by_location(request: Request):
     location = request.data["location"]
-    printers = Printer.objects.filter(location=location.lower())
+    printers = Printer.objects.filter(location=location.upper())
     printers_serializer = PrinterSerializer(instance=printers, many=True)
 
     return Response(data=printers_serializer.data, status=status.HTTP_200_OK)
@@ -135,4 +135,16 @@ def find_all_printers():
     printers = Printer.objects.all()
     printer_serializer = PrinterSerializer(instance=printers, many=True)
 
-    return Response(data=printer_serializer, status=status.HTTP_200_OK)
+    return Response(data=printer_serializer.data, status=status.HTTP_200_OK)
+
+def find_all_locations():
+    locations = []
+    print("Hey")
+
+    printers = Printer.objects.filter()
+
+    for printer in printers:
+        if printer.location not in locations:
+            locations.append(printer.location)
+        
+    return Response(data=locations, status=status.HTTP_200_OK)

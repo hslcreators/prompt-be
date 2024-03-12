@@ -14,5 +14,6 @@ urlpatterns = [
     path("user/change-password", views.change_password, name="Change Password"),
     path("vendor/<printer_id>", views.find_printer_by_id, name="Find Printer By Id"),
     path("vendors", views.find_printers_by_location, name="Find Printer By Location"),
-    path("vendor/all", views.find_all_printers, name="Find All Printers")
+    path("vendor/all/", views.find_all_printers, name="Find All Printers"),
+    path("vendor/locations/", views.find_all_locations, name="Find all Printer Locations")
 ]

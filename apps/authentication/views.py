@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.authentication.responses import ChangePasswordResponse, GenerateTokenResponse, LogoutResponse, ResetPasswordResponse, SignUpResponse, UpdateRatesResponse, VerifyTokenResponse
+from apps.authentication.responses import ChangePasswordResponse, FindAllLocationsResponse, GenerateTokenResponse, LogoutResponse, ResetPasswordResponse, SignUpResponse, UpdateRatesResponse, VerifyTokenResponse
 from apps.authentication.requests import ChangePasswordRequest, CreatePrinterRequest, GetPrinterByLocationRequest, LoginRequest, ResetPasswordRequest, SignUpRequest, UpdateRatesRequest, VerifyTokenRequest
 
 from . import services
@@ -154,7 +154,7 @@ def create_printer(request: Request):
 
         printer = Printer.objects.create(user=user, id_user=user.id,
                                          description=request.data["description"],
-                                         phone_number=request.data["phone_number"], location=request.data["location"].lower(),
+                                         phone_number=request.data["phone_number"], location=request.data["location"].upper(),
                                          offers_coloured=request.data["offers_coloured"],
                                          coloured_rate=request.data["coloured_rate"],
                                          uncoloured_rate=request.data["uncoloured_rate"],
@@ -244,3 +244,12 @@ def find_printers_by_location(request: Request):
 @permission_classes([IsAuthenticated])
 def find_all_printers(request: Request):
     return services.find_all_printers()
+
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Find All Printer Locations', responses={200: FindAllLocationsResponse(many=False)}
+)
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def find_all_locations(request: Request):
+    return services.find_all_locations()
