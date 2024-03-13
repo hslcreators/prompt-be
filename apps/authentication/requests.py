@@ -16,7 +16,6 @@ class VerifyTokenRequest(serializers.Serializer):
 
 class CreatePrinterRequest(serializers.Serializer):
     description = serializers.CharField()
-    is_open = serializers.BooleanField()
     phone_number = serializers.CharField()
     location = serializers.CharField()
     offers_coloured = serializers.BooleanField()
@@ -38,3 +37,6 @@ class ChangePasswordRequest(serializers.Serializer):
     former_password = serializers.CharField()
     new_password = serializers.CharField()
     confirm_password = serializers.CharField()
+
+class GetPrinterByLocationRequest(serializers.Serializer):
+    location = serializers.CharField()

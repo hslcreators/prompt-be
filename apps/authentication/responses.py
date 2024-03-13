@@ -32,3 +32,6 @@ class LogoutResponse(serializers.Serializer):
 
 class ChangePasswordResponse(serializers.Serializer):
     message = serializers.CharField()
+
+class FindAllLocationsResponse(serializers.Serializer):
+    message = serializers.CharField(default="Ignore the JSON this endpoint returns a list of locations")
