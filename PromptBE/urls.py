@@ -44,13 +44,13 @@ urlpatterns = [
     path('admin/', prompt_admin.urls),
     path('test/', test, name='test'),
     
-    path('api/', include('apps.core.urls')),
-    path('api/auth/', include('apps.authentication.urls')),
-    path('api/notif/', include('apps.notifications.urls')),
-    path('api/orders/', include('apps.orders.urls')),
-    path('api/reviews/', include('apps.reviews.urls')),
-    path('api/wallet/', include('apps.wallet.urls')),
-    path('docs/', schema_view.with_ui('swagger', cache_timeout=0)),
+    path('api/v1/', include('apps.core.urls')),
+    path('api/v1/auth/', include('apps.authentication.urls')),
+    path('api/v1/notif/', include('apps.notifications.urls')),
+    path('api/v1/orders/', include('apps.orders.urls')),
+    path('api/v1/reviews/', include('apps.reviews.urls')),
+    path('api/v1/wallet/', include('apps.wallet.urls')),
+    path('api/v1/docs/', schema_view.with_ui('swagger', cache_timeout=0)),
 ]
 
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,

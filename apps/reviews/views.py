@@ -85,7 +85,7 @@ def get_reviews_for_me(request: Request):
     return Response(data=review_serializer.data, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
-    method='get', request_body=None, operation_id='Get Reviews', responses={200: ReviewSerializer(many=True)}
+    method='get', request_body=None, operation_id='Get Reviews For Printer', responses={200: ReviewSerializer(many=True)}
 )
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
