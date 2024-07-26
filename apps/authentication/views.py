@@ -45,6 +45,8 @@ def create_user(request: Request):
             "otp": pin,
             "token": token.key,
             "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
             "is_verified": user.is_verified
         }
 
@@ -82,7 +84,10 @@ def login(request: Request):
 
     response = {
         "user_id": user.id,
-        "token": token.key
+        "token": token.key,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name
     }
 
     return Response(data=response, status=status.HTTP_200_OK)

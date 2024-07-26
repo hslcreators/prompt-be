@@ -6,10 +6,17 @@ class SignUpResponse(serializers.Serializer):
     token = serializers.CharField()
     username = serializers.CharField()
     is_verified = serializers.BooleanField()
+    email = serializers.EmailField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
 
 class LoginResponse(serializers.Serializer):
     user_id = serializers.CharField()
     token = serializers.CharField()
+    email = serializers.EmailField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
 
 class VerifyTokenResponse(serializers.Serializer):
     id = serializers.IntegerField()
