@@ -4,7 +4,6 @@ class SignUpResponse(serializers.Serializer):
     user_id = serializers.IntegerField()
     otp = serializers.IntegerField()
     token = serializers.CharField()
-    username = serializers.CharField()
     is_verified = serializers.BooleanField()
     email = serializers.EmailField()
     first_name = serializers.CharField()
