@@ -11,7 +11,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path('all/', get_reviews, name='Get All Reviews'),
+    path('all/', get_reviews, name='Get All Reviews For Printer'),
     path('create/', create_review, name='Create Review'),
     path('me/', get_reviews_for_me, name='Get Reviews for Me'),
     path('<str:review_id>/', get_review_by_id, name='Get Review'),
