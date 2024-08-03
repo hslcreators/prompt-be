@@ -166,6 +166,7 @@ def create_printer(request: Request):
                                          account_number=request.data["account_number"],
                                          bank_name=request.data["bank_name"],
                                          account_name=request.data["account_name"],
+                                         print_service_name=request.data["print_service_name"].upper()
                                          )
 
         user.is_printer = True

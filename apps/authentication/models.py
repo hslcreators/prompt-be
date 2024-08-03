@@ -14,6 +14,7 @@ class User(AbstractUser):
 class Printer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     id_user = models.IntegerField(unique=True)
+    print_service_name = models.CharField(max_length=225, unique=True, null=False, blank=True)
     description = models.TextField()
     is_open = models.BooleanField(default=True)
     phone_number = models.CharField(max_length=20)
