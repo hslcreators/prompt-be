@@ -104,9 +104,10 @@ def get_orders_by_user(request: Request):
     user = request.user
 
     orders = Order.objects.filter(user=user)
-    order_serializer = OrderSerializer(instance=orders, many=True)
 
-    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
+    response = services.convert_orders_to_response(orders)
+
+    return Response(data=response, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
     method='get', request_body=None, operation_id='Get Order Schedule', responses={200: OrderScheduleResponse(many=False)}
@@ -151,7 +152,9 @@ def update_complete_status(request: Request, order_id: UUID):
 
     return Response({"data": "Order status has been set to incomplete"}, status=status.HTTP_200_OK)
 
-
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Active Orders', responses={200: OrderResponse(many=True)}
+)
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -160,6 +163,7 @@ def get_active_orders(request: Request):
     printer = Printer.objects.get(user=user)
 
     orders = Order.objects.filter(printer=printer, is_complete=False)
-    order_serializer = OrderSerializer(instance=orders, many=True)
 
-    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
+    response = services.convert_orders_to_response(orders)
+
+    return Response(data=response, status=status.HTTP_200_OK)
