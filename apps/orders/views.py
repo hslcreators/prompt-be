@@ -11,14 +11,14 @@ from django.core.files.base import File
 from apps.authentication.models import Printer
 from apps.orders.models import Order, OrderDocument
 from apps.orders.requests import CreateOrderRequest, UpdateStatusRequest
-from apps.orders.responses import OrderScheduleResponse, UpdateStatusResponse
+from apps.orders.responses import OrderResponse, OrderScheduleResponse, UpdateStatusResponse
 from apps.orders.serializers import OrderDocumentSerializer, OrderSerializer
 from . import services
 from drf_yasg.utils import swagger_auto_schema
 
 
 @swagger_auto_schema(
-    method='post', request_body=CreateOrderRequest(many=False), operation_id='Create Order', responses={201: OrderSerializer(many=False)}
+    method='post', request_body=CreateOrderRequest(many=False), operation_id='Create Order', responses={201: OrderResponse(many=False)}
 )
 @api_view(["POST"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -65,7 +65,7 @@ def create_order(request: Request):
     return Response(response, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(
-    method='get', request_body=None, operation_id='Get Order By Id', responses={200: OrderSerializer(many=False)}
+    method='get', request_body=None, operation_id='Get Order By Id', responses={200: OrderResponse(many=False)}
 )
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -74,10 +74,12 @@ def get_order_by_id(request: Request, order_id: UUID):
     order = Order.objects.get(id=order_id)
     order_serializer = OrderSerializer(instance=order)
 
-    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
+    response = services.add_document_to_order_serializer_data(order_serializer, order_id)
+
+    return Response(data=response, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
-    method='get', request_body=None, operation_id='Get Order By Printer', responses={200: OrderSerializer(many=True)}
+    method='get', request_body=None, operation_id='Get Order By Printer', responses={200: OrderResponse(many=True)}
 )
 @api_view(["GET"])
 @authentication_classes([SessionAuthentication, TokenAuthentication])
@@ -87,9 +89,10 @@ def get_orders_by_printer(request: Request):
     printer = Printer.objects.get(id_user=user.id)
 
     orders = Order.objects.filter(printer=printer)
-    order_serializer = OrderSerializer(instance=orders, many=True)
 
-    return Response(data=order_serializer.data, status=status.HTTP_200_OK)
+    response = services.convert_orders_to_response(orders)
+
+    return Response(data=response, status=status.HTTP_200_OK)
 
 @swagger_auto_schema(
     method='get', request_body=None, operation_id='Get Order By User', responses={200: OrderSerializer(many=True)}
