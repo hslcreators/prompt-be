@@ -9,7 +9,7 @@ class Order(models.Model):
     id = models.UUIDField(primary_key=True, unique=True, editable=False, default=uuid.uuid4)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     printer = models.ForeignKey(Printer, on_delete=models.CASCADE)
-    document = models.FileField(upload_to='files_to_print', max_length=200, blank=True, null=True)
+    # document = models.FileField(upload_to='files_to_print', max_length=200, blank=True, null=True)
     no_of_copies = models.IntegerField()
     pages = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -22,5 +22,9 @@ class Order(models.Model):
     
     def __str__(self):
         return f'from {self.user} to {self.printer}'
+
+class OrderDocument(models.Model):
+    order_id = models.UUIDField()
+    document = models.FileField(upload_to='files_to_print', max_length=200, blank=True, null=True)
     
      

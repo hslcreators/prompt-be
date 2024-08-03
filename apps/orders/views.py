@@ -6,12 +6,13 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from django.core.files.base import File
 
 from apps.authentication.models import Printer
-from apps.orders.models import Order
+from apps.orders.models import Order, OrderDocument
 from apps.orders.requests import CreateOrderRequest, UpdateStatusRequest
 from apps.orders.responses import OrderScheduleResponse, UpdateStatusResponse
-from apps.orders.serializers import OrderSerializer
+from apps.orders.serializers import OrderDocumentSerializer, OrderSerializer
 from . import services
 from drf_yasg.utils import swagger_auto_schema
 
@@ -25,24 +26,43 @@ from drf_yasg.utils import swagger_auto_schema
 def create_order(request: Request):
     order_request = request.data
     user = request.user
+    documents = request.FILES.getlist("documents")
     printer_id = request.data["printer_id"]
     printer = Printer.objects.get(id=printer_id)
 
     charge = services.order_charge(printer, int(order_request["no_of_copies"]), int(order_request["pages"]),
                                    order_request["coloured"])
 
-    order = Order.objects.create(user=user, printer=printer, document=order_request["document"],
+    order = Order.objects.create(user=user, printer=printer,
                                  no_of_copies=order_request["no_of_copies"], pages=order_request["pages"],
                                  description=order_request["description"],
                                  time_expected=order_request["time_expected"],
                                  coloured=order_request["coloured"],
                                  charge=charge)
+    
+    documents_serialized_list = []
+    
+    for document in documents:
+    
+        document_instance = OrderDocument.objects.create(
+                order_id=order.id,
+                document=document
+            )
+        
+        document_serializer = OrderDocumentSerializer(instance=document_instance)
+
+        documents_serialized_list.append(document_serializer.data["document"])
+        
+        document_instance.save()
 
     order.save()
 
     order_serializer = OrderSerializer(instance=order)
 
-    return Response(data=order_serializer.data, status=status.HTTP_201_CREATED)
+    response = order_serializer.data
+    response.update({"documents": documents_serialized_list})
+
+    return Response(response, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(
     method='get', request_body=None, operation_id='Get Order By Id', responses={200: OrderSerializer(many=False)}

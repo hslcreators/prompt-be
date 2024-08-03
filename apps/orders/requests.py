@@ -5,7 +5,7 @@ class CreateOrderRequest(serializers.Serializer):
     no_of_copies = serializers.IntegerField()
     pages = serializers.IntegerField()
     coloured = serializers.BooleanField()
-    document = serializers.CharField(default="You actually need to add a file not a characters into this field")
+    documents = serializers.ListField(default="You need to pass in a list of files")
     description = serializers.CharField()
     time_expected = serializers.TimeField()
 
