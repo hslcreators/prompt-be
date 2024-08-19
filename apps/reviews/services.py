@@ -7,11 +7,14 @@ def calculate_average_rating(review: Review):
     add = 0
     for one_review in Review.objects.filter(printer=printer):
         if one_review.id == review.id:
-            add += review.rating
+            add += int(review.rating)
         else:
-            add += one_review.rating
+            add += int(one_review.rating)
 
-    average = add / len(Review.objects.filter(printer=printer))
+    if len(Review.objects.filter(printer=printer)) == 0:
+        average = 0
+    else:
+        average = add / len(Review.objects.filter(printer=printer))
 
     printer.average_rating = round(average)
     printer.save()
