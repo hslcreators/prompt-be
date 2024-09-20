@@ -6,7 +6,6 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from django.core.files.base import File
 
 from apps.authentication.models import Printer
 from apps.orders.models import Order, OrderDocument
@@ -62,6 +61,8 @@ def create_order(request: Request):
     response = order_serializer.data
     response.update({"documents": documents_serialized_list})
 
+    response = services.add_extra_details_to_order(response)
+
     return Response(response, status=status.HTTP_201_CREATED)
 
 @swagger_auto_schema(
@@ -74,7 +75,7 @@ def get_order_by_id(request: Request, order_id: UUID):
     order = Order.objects.get(id=order_id)
     order_serializer = OrderSerializer(instance=order)
 
-    response = services.add_document_to_order_serializer_data(order_serializer, order_id)
+    response = services.add_document_and_extra_details_to_order_serializer_data(order_serializer, order_id)
 
     return Response(data=response, status=status.HTTP_200_OK)
 

@@ -87,7 +87,8 @@ def login(request: Request):
         "token": token.key,
         "email": user.email,
         "first_name": user.first_name,
-        "last_name": user.last_name
+        "last_name": user.last_name,
+        "is_printer": user.is_printer
     }
 
     return Response(data=response, status=status.HTTP_200_OK)

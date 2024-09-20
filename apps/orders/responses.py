@@ -25,3 +25,5 @@ class OrderResponse(serializers.Serializer):
     )
     description = serializers.CharField()
     time_expected = serializers.TimeField()
+    customer_name = serializers.CharField()
+    vendor_name = serializers.CharField()
