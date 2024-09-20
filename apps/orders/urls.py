@@ -8,5 +8,5 @@ urlpatterns = [
     path("<order_id>", views.get_order_by_id, name="Get Order By Order Id"),
     path("schedule/<order_id>", views.get_order_schedule, name="Get Order Schedule"),
     path("active/", views.get_active_orders, name="Get Active Orders"),
-    path("<order_id>/", views.update_complete_status, name="Update Order Status")
+    path("<order_id>/update", views.update_complete_status, name="Update Order Status")
 ]
