@@ -260,3 +260,12 @@ def find_all_printers(request: Request):
 @permission_classes([IsAuthenticated])
 def find_all_locations(request: Request):
     return services.find_all_locations()
+
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Search printer by location or name', responses={200: PrinterSerializer(many=True)}
+)
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def search_by_vendor_name(request: Request, query: str):
+    return services.search_by_vendor_name(query)

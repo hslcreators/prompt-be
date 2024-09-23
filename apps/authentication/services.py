@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from apps.authentication.models import OneTimePassword, Printer
 from apps.authentication.serializers import OTPSerializer, PrinterSerializer
 
+from django.db.models import Q
+
 
 def generate_pin():
     return randrange(100000, 1000000)
@@ -139,7 +141,6 @@ def find_all_printers():
 
 def find_all_locations():
     locations = []
-    print("Hey")
 
     printers = Printer.objects.filter()
 
@@ -148,3 +149,10 @@ def find_all_locations():
             locations.append(printer.location)
         
     return Response(data=locations, status=status.HTTP_200_OK)
+
+def search_by_vendor_name(query: str):
+
+    printers = Printer.objects.filter(Q(print_service_name__icontains=query) | Q(location__icontains=query))
+    printers_serializer = PrinterSerializer(instance=printers, many=True)
+
+    return Response(data=printers_serializer.data, status=status.HTTP_200_OK)
