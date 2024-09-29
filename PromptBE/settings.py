@@ -110,6 +110,9 @@ CSRF_TRUSTED_ORIGINS = [
 
     "http://promptbe.onrender.com",
     "https://promptbe.onrender.com",
+
+    "http://prompt-be-production.up.railway.app",
+    "http://prompt-be-production.up.railway.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
