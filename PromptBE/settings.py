@@ -73,6 +73,8 @@ MIDDLEWARE = [
     
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -184,6 +186,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Optionally, specify the directories to search for static files (e.g., within apps)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # Directory for your own static files
+]
 
 # MEDIA
 MEDIA_URL = 'media/'
