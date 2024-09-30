@@ -81,6 +81,7 @@ CORS_ALLOW_HEADERS = [
     'x-api-key',
     'content-type',
     'X-CSRFToken',
+    "Authorization"
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -95,6 +96,9 @@ CORS_ALLOWED_ORIGINS = [
     
     "http://prompt.vercel.app",
     "https://prompt.vercel.app",
+
+    "http://prompt-fe.onrender.com",
+    "https://prompt-fe.onrender.com"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
