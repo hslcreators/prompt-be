@@ -3,6 +3,8 @@ from django.db import models
 from apps.authentication.models import User, Printer
 
 import uuid
+import random
+import string
 
 # Create your models here.
 class Order(models.Model):
@@ -25,6 +27,7 @@ class Order(models.Model):
 
 class OrderDocument(models.Model):
     order_id = models.UUIDField()
-    document = models.FileField(upload_to='files_to_print', max_length=200, blank=True, null=True)
+    document_name = models.CharField(default=random.choice(string.ascii_uppercase))
+    document = models.BinaryField(blank=True, null=True) #TODO: remember to change this to required
     
      
