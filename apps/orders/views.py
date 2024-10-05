@@ -46,7 +46,7 @@ def create_order(request: Request):
         document_instance = OrderDocument.objects.create(
                 order_id=order.id,
                 document_name=document.name,
-                document=services.compress_file_data(document.read())
+                document=document.read()
             )
         
         document_serializer = OrderDocumentSerializer(instance=document_instance)
