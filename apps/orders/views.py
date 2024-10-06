@@ -1,4 +1,5 @@
 from uuid import UUID
+from decouple import config
 
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -182,3 +183,18 @@ def get_order_document_by_id(request: Request, order_document_id: int):
         return Response(data=services.get_order_document_by_id(request.user, order_document_id), status=status.HTTP_200_OK)
     except Exception:
         return Response(data={"message": "Order Document not found for user"})
+
+@api_view(["GET"])
+def delete_all_orders(request: Request, key: str):
+
+    if key != config('CRON_KEY'):
+        return Response({"message": "You're not authorized to perform this action"})
+    
+    services.delete_all_orders()
+
+    return Response(data={"message": "Daily delete CRON successful"}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def cron_job(request: Request):
+
+    return Response(data={"cron": "Successful"}, status=status.HTTP_200_OK)

@@ -68,6 +68,10 @@ def get_order_document_by_id(user, order_document_id):
 
     return order_document_serializer.data
 
+def delete_all_orders():
+    OrderDocument.objects.all().delete()
+    Order.objects.all().delete()
+
 def compress_file_data(file_bytes):
     """Compress the file bytes."""
     return zlib.compress(file_bytes)
