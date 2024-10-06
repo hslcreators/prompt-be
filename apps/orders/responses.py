@@ -21,9 +21,14 @@ class OrderResponse(serializers.Serializer):
     paid = serializers.BooleanField()
     charge = serializers.IntegerField()
     documents = serializers.ListField(
-        child=serializers.CharField(default="These are actually a list of documents")
+        child=serializers.CharField(default="These are actually a list of javascript objects in the form {id: intId, name:'filename'}")
     )
     description = serializers.CharField()
     time_expected = serializers.TimeField()
     customer_name = serializers.CharField()
     vendor_name = serializers.CharField()
+
+class OrderDocumentResponse(serializers.Serializer):
+    id = serializers.IntegerField()
+    document_name = serializers.CharField()
+    document = serializers.CharField()

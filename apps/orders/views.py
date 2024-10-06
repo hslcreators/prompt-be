@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from apps.authentication.models import Printer
 from apps.orders.models import Order, OrderDocument
 from apps.orders.requests import CreateOrderRequest, UpdateStatusRequest
-from apps.orders.responses import OrderResponse, OrderScheduleResponse, UpdateStatusResponse
+from apps.orders.responses import OrderDocumentResponse, OrderResponse, OrderScheduleResponse, UpdateStatusResponse
 from apps.orders.serializers import OrderDocumentSerializer, OrderSerializer
 from . import services
 from drf_yasg.utils import swagger_auto_schema
@@ -169,3 +169,16 @@ def get_active_orders(request: Request):
     response = services.convert_orders_to_response(orders)
 
     return Response(data=response, status=status.HTTP_200_OK)
+
+@swagger_auto_schema(
+    method='get', request_body=None, operation_id='Get Order Document By Id', responses={200: OrderDocumentResponse(many=False)}
+)
+@api_view(["GET"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_order_document_by_id(request: Request, order_document_id: int):
+
+    try:
+        return Response(data=services.get_order_document_by_id(request.user, order_document_id), status=status.HTTP_200_OK)
+    except Exception:
+        return Response(data={"message": "Order Document not found for user"})

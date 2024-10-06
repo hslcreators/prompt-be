@@ -1,5 +1,5 @@
 from apps.authentication.models import Printer, User
-from apps.orders.models import OrderDocument
+from apps.orders.models import Order, OrderDocument
 from apps.orders.serializers import OrderDocumentSerializer, OrderSerializer
 
 import zlib
@@ -55,6 +55,18 @@ def add_extra_details_to_order(response: dict):
     response.update({"vendor_name": printer_name})
 
     return response
+
+def get_order_document_by_id(user, order_document_id):
+    
+    order_document = OrderDocument.objects.get(id=order_document_id)
+    order = Order.objects.get(id=order_document.order_id)
+
+    if order.user != user and order.printer.user != user:
+        raise Exception("Order Document not found for user")
+
+    order_document_serializer = OrderDocumentSerializer(instance=order_document)
+
+    return order_document_serializer.data
 
 def compress_file_data(file_bytes):
     """Compress the file bytes."""
