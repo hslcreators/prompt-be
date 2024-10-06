@@ -1,5 +1,6 @@
 from uuid import UUID
 from decouple import config
+from django.core.mail import send_mail
 
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
