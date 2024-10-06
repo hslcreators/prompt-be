@@ -1,6 +1,8 @@
 from apps.authentication.models import Printer, User
-from apps.orders.models import OrderDocument
+from apps.orders.models import Order, OrderDocument
 from apps.orders.serializers import OrderDocumentSerializer, OrderSerializer
+
+import zlib
 
 
 def order_charge(printer: Printer, no_of_copies: int, pages: int, coloured: bool):
@@ -10,17 +12,17 @@ def order_charge(printer: Printer, no_of_copies: int, pages: int, coloured: bool
     else:
         return no_of_copies * pages * printer.uncoloured_rate
     
-def add_document_and_extra_details_to_order_serializer_data(order_serializer: OrderSerializer, order_id: int):
+def add_document_and_extra_details_to_order_serializer_data(order_serializer: OrderSerializer):
 
-    documents = OrderDocument.objects.filter(order_id=order_id)
+    order_documents = OrderDocument.objects.filter(order_id=order_serializer.data["id"])
 
     documents_serialized_list = []
     
-    for document in documents:
+    for order_document in order_documents:
         
-        document_serializer = OrderDocumentSerializer(instance=document)
+        document_serializer = OrderDocumentSerializer(instance=order_document)
 
-        documents_serialized_list.append(document_serializer.data["document"])
+        documents_serialized_list.append({"id": document_serializer.data["id"], "name": document_serializer.data["document_name"]})
 
     response = order_serializer.data
     response.update({"documents": documents_serialized_list})
@@ -37,7 +39,7 @@ def convert_orders_to_response(orders):
 
         order_serializer = OrderSerializer(instance=order)
 
-        response.append(add_document_and_extra_details_to_order_serializer_data(order_serializer, order.id))
+        response.append(add_document_and_extra_details_to_order_serializer_data(order_serializer))
 
     return response
 
@@ -53,3 +55,23 @@ def add_extra_details_to_order(response: dict):
     response.update({"vendor_name": printer_name})
 
     return response
+
+def get_order_document_by_id(user, order_document_id):
+    
+    order_document = OrderDocument.objects.get(id=order_document_id)
+    order = Order.objects.get(id=order_document.order_id)
+
+    if order.user != user and order.printer.user != user:
+        raise Exception("Order Document not found for user")
+
+    order_document_serializer = OrderDocumentSerializer(instance=order_document)
+
+    return order_document_serializer.data
+
+def compress_file_data(file_bytes):
+    """Compress the file bytes."""
+    return zlib.compress(file_bytes)
+
+def decompress_file_data(compressed_data):
+    """Decompress the file bytes."""
+    return zlib.decompress(compressed_data)
