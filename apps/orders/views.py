@@ -51,7 +51,7 @@ def create_order(request: Request):
         
         document_serializer = OrderDocumentSerializer(instance=document_instance)
 
-        documents_serialized_list.append(document_serializer.data["document"])
+        documents_serialized_list.append({"name": document_serializer.data["document_name"], "bytes": document_serializer.data["document"]})
         
         document_instance.save()
 
@@ -76,7 +76,7 @@ def get_order_by_id(request: Request, order_id: UUID):
     order = Order.objects.get(id=order_id)
     order_serializer = OrderSerializer(instance=order)
 
-    response = services.add_document_and_extra_details_to_order_serializer_data(order_serializer, order_id)
+    response = services.add_extra_details_to_order(order_serializer.data)
 
     return Response(data=response, status=status.HTTP_200_OK)
 

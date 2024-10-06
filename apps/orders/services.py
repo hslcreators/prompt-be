@@ -22,8 +22,7 @@ def add_document_and_extra_details_to_order_serializer_data(order_serializer: Or
         
         document_serializer = OrderDocumentSerializer(instance=order_document)
 
-        documents_serialized_list.append(document_serializer.data["document"])
-        documents_serialized_list.append(document_serializer.data["document_name"])
+        documents_serialized_list.append({"name": document_serializer.data["document_name"], "bytes": document_serializer.data["document"]})
 
     response = order_serializer.data
     response.update({"documents": documents_serialized_list})
@@ -40,7 +39,7 @@ def convert_orders_to_response(orders):
 
         order_serializer = OrderSerializer(instance=order)
 
-        response.append(add_document_and_extra_details_to_order_serializer_data(order_serializer, order.id))
+        response.append(add_extra_details_to_order(order_serializer.data))
 
     return response
 
