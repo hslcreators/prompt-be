@@ -13,4 +13,4 @@ class OrderDocumentSerializer(serializers.ModelSerializer):
 
     class Meta(object):
         model = OrderDocument
-        fields = ["document", "document_name"]
+        fields = ["id", "document", "document_name"]
