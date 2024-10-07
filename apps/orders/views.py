@@ -1,4 +1,5 @@
 from uuid import UUID
+from decouple import config
 
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -14,7 +15,6 @@ from apps.orders.responses import OrderDocumentResponse, OrderResponse, OrderSch
 from apps.orders.serializers import OrderDocumentSerializer, OrderSerializer
 from . import services
 from drf_yasg.utils import swagger_auto_schema
-
 
 @swagger_auto_schema(
     method='post', request_body=CreateOrderRequest(many=False), operation_id='Create Order', responses={201: OrderResponse(many=False)}
@@ -56,6 +56,12 @@ def create_order(request: Request):
         document_instance.save()
 
     order.save()
+
+    services.send_template_mail(
+        emails=[user.email, printer.user.email],
+        subject=f'Print Order Notification',
+        message=f'<h1>{user.email} has a placed an order for {printer.print_service_name}</h1>'
+    )
 
     order_serializer = OrderSerializer(instance=order)
 
@@ -149,6 +155,19 @@ def update_complete_status(request: Request, order_id: UUID):
 
     order.save()
 
+    if complete_status == True:
+        services.send_template_mail(
+            emails=[user.email],
+            subject='Print Order Notification',
+            message='<h1>Order Status</h1><p>Print Order status has been completed</p>'
+        )
+    else:
+        services.send_template_mail(
+            emails=[user.email],
+            subject='Print Order Notification',
+            message='<h1>Order Status</h1><p>Print Order has been rejected</p>'
+        )
+
     if order.is_complete:
         return Response({"data": "Order status has been set to completed"}, status=status.HTTP_200_OK)
 
@@ -182,3 +201,18 @@ def get_order_document_by_id(request: Request, order_document_id: int):
         return Response(data=services.get_order_document_by_id(request.user, order_document_id), status=status.HTTP_200_OK)
     except Exception:
         return Response(data={"message": "Order Document not found for user"})
+
+@api_view(["GET"])
+def delete_all_orders(request: Request, key: str):
+
+    if key != config('CRON_KEY'):
+        return Response({"message": "You're not authorized to perform this action"})
+    
+    services.delete_all_orders()
+
+    return Response(data={"message": "Daily delete CRON successful"}, status=status.HTTP_200_OK)
+
+@api_view(["GET"])
+def cron_job(request: Request):
+
+    return Response(data={"cron": "Successful"}, status=status.HTTP_200_OK)

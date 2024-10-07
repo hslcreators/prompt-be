@@ -1,9 +1,12 @@
 from apps.authentication.models import Printer, User
 from apps.orders.models import Order, OrderDocument
 from apps.orders.serializers import OrderDocumentSerializer, OrderSerializer
+from django.core.mail import send_mail
+from decouple import config
 
 import zlib
 
+EMAIL_SENDER = config('EMAIL_HOST_USER')
 
 def order_charge(printer: Printer, no_of_copies: int, pages: int, coloured: bool):
 
@@ -68,6 +71,10 @@ def get_order_document_by_id(user, order_document_id):
 
     return order_document_serializer.data
 
+def delete_all_orders():
+    OrderDocument.objects.all().delete()
+    Order.objects.all().delete()
+
 def compress_file_data(file_bytes):
     """Compress the file bytes."""
     return zlib.compress(file_bytes)
@@ -75,3 +82,13 @@ def compress_file_data(file_bytes):
 def decompress_file_data(compressed_data):
     """Decompress the file bytes."""
     return zlib.decompress(compressed_data)
+
+def send_template_mail(emails, subject, message):
+    send_mail(
+        subject=subject,
+        message='',  # Plain text message
+        from_email=EMAIL_SENDER,
+        recipient_list=emails,
+        fail_silently=False,
+        html_message=message
+        )
